@@ -1,0 +1,41 @@
+<!-- templates/musics/song_detail.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ song.title }} - 상세 정보</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- 스타일 시트 링크 -->
+</head>
+<body>
+    <div class="container">
+        <h1>{{ song.title }}</h1>
+        <img src="{{ song.album_cover.url }}" alt="{{ song.title }} 앨범 커버" style="width:200px;height:auto;">
+        <p>아티스트: {{ song.artist }}</p>
+        <p>장르: {{ song.genre }}</p>
+        <p>발매일: {{ song.release_date }}</p>
+
+        <h2>댓글</h2>
+        {% if song.comments %}
+            <ul>
+                {% for comment in song.comments %}
+                    <li>
+                        <strong>{{ comment.user.username }}</strong>: {{ comment.content }} <small>{{ comment.created_at }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>댓글이 없습니다.</p>
+        {% endif %}
+        
+        <!-- 댓글 작성 폼 -->
+        <h3>댓글 작성</h3>
+        <form method="POST" action="{% url 'add_comment' song.id %}">  <!-- 댓글 추가 URL -->
+            {% csrf_token %}
+            <textarea name="content" rows="4" cols="50" placeholder="댓글을 입력하세요..."></textarea>
+            <br>
+            <button type="submit">댓글 추가</button>
+        </form>
+    </div>
+</body>
+</html>
