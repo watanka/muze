@@ -8,19 +8,15 @@ def index(request):
 
 
 def detail(request, song_id):
-    try:
-        song = Song.objects.get(pk=song_id)
-    except Song.DoesNotExist:
-        raise Http404(f"Song [{song_id}] does not exist.")
-    return render(request, "musics/detail.html", {"song": song})
-def comments(request, song_id):
     song = get_object_or_404(Song, id = song_id)
     comments = song.comments.all()
     context = {
         'song': song,
         'comments': comments
     }
-    return render(request, 'music/detail.html', context)
+    return render(request, 'musics/detail.html', context)
 
+def comments(request, song_id):
+    pass
 def likes(request, song_id):
     pass
