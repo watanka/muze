@@ -1,7 +1,9 @@
-from django.http import HttpResponse, Http404
-from django.views.generic import DetailView
-from django.shortcuts import render, get_object_or_404
-from .models import Song
+from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.urls import reverse
+from django.views.generic import DetailView, View
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Song, Comment
+from .form import CommentForm
 
 def index(request):
     latest_song_list = Song.objects.order_by("-release_date")[:5]
@@ -28,7 +30,37 @@ def detail(request, song_id):
     }
     return render(request, 'musics/detail.html', context)
 
-def comments(request, song_id):
-    pass
+class CommentView(View):
+    def get(self, request, song_id):
+        song = get_object_or_404(Song, id=song_id)
+        comments = song.comments.all()  # song에 연결된 댓글 가져오기
+        return render(request, "musics/comments.html", {'song': song, 'comments': comments})
+
+    def post(self, request, song_id):
+        song = get_object_or_404(Song, id=song_id)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.song = song
+            new_comment.save()
+            return redirect('musics:comments', song_id=song_id)
+        # 유효하지 않은 폼일 경우 댓글 목록과 함께 다시 렌더링
+        comments = song.comments.all()
+        return redirect(reverse('musics:detail', args=(song.id,)))
+    
+    # render(request, "musics/comments.html", {'song': song, 'comments': comments, 'form': form})
+    
+    def get_queryset(self):
+        song_id =self.kwargs['song_id']
+        return Comment.objects.filter(song__id=song_id).order_by('-created_at')  # 특정 Song에 연결된 댓글만 가져옴
+
+def add_comment(request, song_id):
+    song = get_object_or_404(Song, id = song_id)
+    # validation
+    Comment.objects.create(
+        song = song,
+        content = request.content
+    )
+
 def likes(request, song_id):
     pass
