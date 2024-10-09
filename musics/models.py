@@ -16,7 +16,7 @@ class Song(models.Model):
         # 필요에 따라 더 많은 장르 추가
     ]
     title = models.CharField(max_length = 200)
-    album_cover =  models.ImageField(max_length=200)
+    album_cover =  models.ImageField(max_length=200, default='default_albumcover.png')
     artist = models.CharField(max_length = 100)
     genre = models.CharField(max_length=20, choices = GENRE_CHOICES)
     release_date = models.DateField()

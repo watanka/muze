@@ -16,28 +16,8 @@
         <p>아티스트: {{ song.artist }}</p>
         <p>장르: {{ song.genre }}</p>
         <p>발매일: {{ song.release_date }}</p>
-
-        <h2>댓글</h2>
-        {% if comments %}
-            <ul>
-                {% for comment in comments %}
-                    <li>
-                        <strong>{{ comment.user.username }}</strong>: {{ comment.content }} <small>{{ comment.created_at }}</small>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>댓글이 없습니다.</p>
-        {% endif %}
-        
         <!-- 댓글 작성 폼 -->
-        <h3>댓글 작성</h3>
-        <form method="POST" action="{% url 'add_comment' song.id %}">
-            {% csrf_token %}
-            <textarea name="content" rows="4" cols="50" placeholder="댓글을 입력하세요..."></textarea>
-            <br>
-            <button type="submit">댓글 추가</button>
-        </form>
+        {% include 'musics/comments.html' %}
     </div>
 </body>
 </html>
