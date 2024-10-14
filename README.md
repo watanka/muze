@@ -41,3 +41,8 @@ User
 - send song to another user
 - `GET`, view mates
 - `GET`, 다른 유저들과의 compatibility 확인
+
+
+#### 음악 정보 수집
+음악 정보 수집 API -> Django DB 저장 -> scheduling 반복
+

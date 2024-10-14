@@ -1,4 +1,5 @@
 from django.db import models
+from urllib.parse import unquote
 
 # Create your models here.
 class Song(models.Model):
@@ -18,8 +19,12 @@ class Song(models.Model):
     title = models.CharField(max_length = 200)
     album_cover =  models.ImageField(upload_to='album_cover/', max_length=200, default='default_albumcover.png')
     artist = models.CharField(max_length = 100)
-    genre = models.CharField(max_length=20, choices = GENRE_CHOICES)
+    genre = models.CharField(max_length=20, choices = GENRE_CHOICES, blank=True)
     release_date = models.DateField()
+
+    def save(self, *args, **kwargs):
+        self.album_cover = unquote(self.album_cover)
+        super(Song, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} by {self.artist}"

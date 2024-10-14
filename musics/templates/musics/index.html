@@ -1,6 +1,6 @@
 <h1>노래 목록</h1>
     <ul>
-        {% for song in latest_song_list %}
+        {% for song in song_list %}
             <li>
                 <h2>{{ song.title }}</h2>
                 <p>아티스트: {{ song.artist }}</p>
@@ -11,3 +11,20 @@
             <li>등록된 노래가 없습니다.</li> <!-- 노래가 없을 때 -->
         {% endfor %}
     </ul>
+<div class="pagination">
+    <span class="step-links">
+        {%if song_list.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ song_list.previous_page_number }}">previous</a>
+        {% endif %}            
+
+        <span class="current">
+            Page {{ song_list.number }} of {{song_list.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ song_list.next_page_number }}">next</a>
+            <a href="?page={{ song_list.paginator.num_pages}}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
