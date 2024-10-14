@@ -1,6 +1,16 @@
 ## 음악 취향을 공유하는 음악추천 서비스
 
+### TODO
+- [ ] scheduling job - 음악 크롤링
+- [ ] error handling
+- [ ] logging
+- [ ] monitoring
+- [ ] microservice
+
+
+### 요구사항 정의
 - [ ] 음악은 유저가 직접 업로드하거나 삭제할 수 없다.
+
 
 #### schema
 Song
