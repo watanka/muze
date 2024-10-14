@@ -1,14 +1,16 @@
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import DetailView, View
+from django.views.generic import ListView, DetailView, View
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Song, Comment
 from .form import CommentForm
 
-def index(request):
-    latest_song_list = Song.objects.order_by("-release_date")[:5]
-    return render(request, 'musics/index.html', {'latest_song_list': latest_song_list})
-
+class SongListView(ListView):
+    model = Song
+    template_name = "musics/index.html"
+    context_object_name = "song_list"
+    paginate_by=20
+    
 
 class SongDetailView(DetailView):
     model = Song
