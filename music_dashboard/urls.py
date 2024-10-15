@@ -16,17 +16,21 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import render
 from django.contrib import admin
 from django.urls import include, path
 from debug_toolbar.toolbar import debug_toolbar_urls
-from oauth2_provider import urls as oauth2_urls
+
+def home(request):
+    return render(request, 'home.html')
 
 urlpatterns = [
+    path('', home),
     path('users/', include("users.urls")),
     path('musics/', include("musics.urls")),
     path('polls/', include("polls.urls")),
     path("admin/", admin.site.urls),
-    path("o/", include(oauth2_urls))
+    path("accounts/", include("allauth.urls"))
 ] + debug_toolbar_urls()
 
 # if settings.DEBUG:

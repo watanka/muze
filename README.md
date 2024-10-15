@@ -46,3 +46,9 @@ User
 #### 음악 정보 수집
 음악 정보 수집 API -> Django DB 저장 -> scheduling 반복
 
+#### OAuth
+
+client - web server
+web server -> form to access auth server -> client 
+client -> auth server
+auth server -> give token to client
