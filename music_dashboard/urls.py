@@ -19,12 +19,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from debug_toolbar.toolbar import debug_toolbar_urls
+from oauth2_provider import urls as oauth2_urls
 
 urlpatterns = [
     path('users/', include("users.urls")),
     path('musics/', include("musics.urls")),
     path('polls/', include("polls.urls")),
     path("admin/", admin.site.urls),
+    path("o/", include(oauth2_urls))
 ] + debug_toolbar_urls()
 
 # if settings.DEBUG:
