@@ -168,6 +168,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 ACCOUNT_EMAIL_REQUIRED = "none"  # 이메일 필수
-LOGIN_REDIRECT_URL = '/'  # 로그인 후 리다이렉트될 URL
+LOGIN_REDIRECT_URL = 'users:create_user_profile'  # 로그인 후 리다이렉트될 URL
 LOGOUT_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
