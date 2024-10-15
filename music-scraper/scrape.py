@@ -2,8 +2,12 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pandas as pd
 
-import os
+import os, sys
 import django
+
+project_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_path not in sys.path:
+    sys.path.append(project_path)
 # Django settings 모듈 설정
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'music_dashboard.settings')
 
