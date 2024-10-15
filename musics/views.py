@@ -25,15 +25,6 @@ class SongDetailView(DetailView):
         context['comments'] = self.object.comments.all()
         return context
 
-def detail(request, song_id):
-    song = get_object_or_404(Song, id = song_id)
-    comments = song.comments.all()
-    context = {
-        'song': song,
-        'comments': comments
-    }
-    return render(request, 'musics/detail.html', context)
-
 @method_decorator(login_required, name='dispatch')  # 모든 메서드에 대해 로그인 요구
 class CommentView(View):
     def get(self, request, song_id):
@@ -62,13 +53,17 @@ class CommentView(View):
         song_id = self.kwargs['song_id']
         return Comment.objects.filter(song__id=song_id).order_by('-created_at')  # 특정 Song에 연결된 댓글만 가져옴
 
-def add_comment(request, song_id):
-    song = get_object_or_404(Song, id = song_id)
-    # validation
-    Comment.objects.create(
-        song = song,
-        content = request.content
-    )
-
+@login_required
 def likes(request, song_id):
-    pass
+    song = get_object_or_404(Song, id=song_id)
+    
+    user_profile = request.user.userprofile
+    if song in user_profile.liked_songs.all():
+        # 유저가 이미 이 곡을 좋아요 했을 경우
+        return redirect(reverse('musics:detail', args=[song_id]))
+
+    song.num_likes += 1
+    song.save(update_fields=['num_likes'])
+    user_profile.liked_songs.add(song)
+
+    return redirect(reverse('musics:detail', args=(song_id,)))

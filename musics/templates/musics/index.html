@@ -5,6 +5,8 @@
                 <h2><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a></h2>
                 <p>아티스트: {{ song.artist }}</p>
                 <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p> <!-- 날짜 포맷 -->
+                <p>likes: {{ song.num_likes }}</p>
+                <p>mentioned: {{ song.num_mention }}</p>
                 <img src="{{ song.album_cover.url }}" alt="{{ song.title }} 앨범 커버" style="width: 200px; height: auto;"> <!-- 앨범 커버 이미지 -->
             </li>
         {% empty %}

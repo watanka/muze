@@ -16,12 +16,8 @@
         <p>아티스트: {{ song.artist }}</p>
         <p>장르: {{ song.genre }}</p>
         <p>발매일: {{ song.release_date }}</p>
-        <form action="{% url 'user_messages:send_message' song.id %}" method="post">
-
-            {% csrf_token %}
-            <input type="hidden" name="song_id" value="{{ song.id }}">
-            <button type="submit">친구에게 추천하기</button>
-        </form>
+        <a href="{% url 'user_messages:send_message' song.id %}" method="post">친구에게 추천하기</a>
+        <a href="{% url 'musics:like' song.id %}" method="post">좋아요!</a>
         <!-- 댓글 작성 폼 -->
         {% include 'musics/comments.html' %}
     </div>
