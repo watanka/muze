@@ -42,6 +42,7 @@ AUTHENTICATION_BACKENDS = [
 # Application definition
 
 INSTALLED_APPS = [
+    "user_messages.apps.UserMessagesConfig",
     "users.apps.UsersConfig",
     "musics.apps.MusicsConfig",
     "polls.apps.PollsConfig",

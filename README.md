@@ -6,7 +6,8 @@
 - [ ] logging
 - [ ] monitoring
 - [ ] microservice
-
+- [ ] User와 UserProfile이 분리되어있기 때문에, 둘 중 하나 생성시 같이 생성될 수 있도록 설정해야함.
+- [ ] Song에다가 message 기능 추가하기
 
 ### 요구사항 정의
 - [ ] 음악은 유저가 직접 업로드하거나 삭제할 수 없다.
@@ -54,4 +55,3 @@ client -> auth server
 auth server -> give token to client
 
 
-User와 UserProfile이 분리되어있기 때문에, 둘 중 하나 생성시 같이 생성될 수 있도록 설정해야함.

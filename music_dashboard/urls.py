@@ -29,6 +29,7 @@ def home(request):
 
 urlpatterns = [
     path('', home),
+    path('messages/', include("user_messages.urls")),
     path('users/', include("users.urls")),
     path('musics/', include("musics.urls")),
     path('polls/', include("polls.urls")),

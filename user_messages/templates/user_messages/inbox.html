@@ -1,0 +1,12 @@
+<h2>Your Inbox</h2>
+<ul>
+    {% for message in messages %}
+        <li>
+            <a href="{% url 'user_messages:read_message' message.id %}">
+                From: {{ message.sender }} - {{ message.content }} ({{ message.timestamp }})
+            </a>
+        </li>
+    {% empty %}
+        <li>No messages.</li>
+    {% endfor %}
+</ul>
