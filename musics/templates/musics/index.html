@@ -2,7 +2,7 @@
     <ul>
         {% for song in song_list %}
             <li>
-                <h2>{{ song.title }}</h2>
+                <h2><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a></h2>
                 <p>아티스트: {{ song.artist }}</p>
                 <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p> <!-- 날짜 포맷 -->
                 <img src="{{ song.album_cover.url }}" alt="{{ song.title }} 앨범 커버" style="width: 200px; height: auto;"> <!-- 앨범 커버 이미지 -->
@@ -13,18 +13,18 @@
     </ul>
 <div class="pagination">
     <span class="step-links">
-        {%if song_list.has_previous %}
+        {%if page_obj.has_previous %}
             <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ song_list.previous_page_number }}">previous</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
         {% endif %}            
 
         <span class="current">
-            Page {{ song_list.number }} of {{song_list.paginator.num_pages }}.
+            Page {{ page_obj.number }} of {{page_obj.paginator.num_pages }}.
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ song_list.next_page_number }}">next</a>
-            <a href="?page={{ song_list.paginator.num_pages}}">last &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages}}">last &raquo;</a>
         {% endif %}
     </span>
 </div>

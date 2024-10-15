@@ -36,7 +36,8 @@ class CommentView(View):
     def get(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)
         comments = song.comments.all()  # song에 연결된 댓글 가져오기
-        return render(request, "musics/comments.html", {'song': song, 'comments': comments})
+        return render(request, "musics/comments.html", 
+                      {'song': song, 'comments': comments})
 
     def post(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)
@@ -45,7 +46,7 @@ class CommentView(View):
             new_comment = form.save(commit=False)
             new_comment.song = song
             new_comment.save()
-            return redirect('musics:comments', song_id=song_id)
+            return redirect(reverse('musics:detail', args=(song_id, )))
         # 유효하지 않은 폼일 경우 댓글 목록과 함께 다시 렌더링
         comments = song.comments.all()
         return redirect(reverse('musics:detail', args=(song.id,)))
@@ -53,7 +54,7 @@ class CommentView(View):
     # render(request, "musics/comments.html", {'song': song, 'comments': comments, 'form': form})
     
     def get_queryset(self):
-        song_id =self.kwargs['song_id']
+        song_id = self.kwargs['song_id']
         return Comment.objects.filter(song__id=song_id).order_by('-created_at')  # 특정 Song에 연결된 댓글만 가져옴
 
 def add_comment(request, song_id):
