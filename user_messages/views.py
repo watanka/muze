@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Message
@@ -12,6 +12,7 @@ def send_message(request):
         if form.is_valid():
             message = form.save(commit=False)
             message.sender = request.user
+            message.song_id = request.POST.get('song_id')
             message.save()
             return redirect(reverse('user_messages:inbox'))
     else:
