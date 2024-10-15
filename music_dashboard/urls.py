@@ -21,8 +21,11 @@ from django.contrib import admin
 from django.urls import include, path
 from debug_toolbar.toolbar import debug_toolbar_urls
 
+from musics.models import Song
+
 def home(request):
-    return render(request, 'home.html')
+    song_list = Song.objects.all()
+    return render(request, 'home.html', {'song_list': song_list})
 
 urlpatterns = [
     path('', home),

@@ -2,6 +2,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, View
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from .models import Song, Comment
 from .form import CommentForm
 
@@ -32,6 +34,7 @@ def detail(request, song_id):
     }
     return render(request, 'musics/detail.html', context)
 
+@method_decorator(login_required, name='dispatch')  # 모든 메서드에 대해 로그인 요구
 class CommentView(View):
     def get(self, request, song_id):
         song = get_object_or_404(Song, id=song_id)
@@ -40,13 +43,15 @@ class CommentView(View):
                       {'song': song, 'comments': comments})
 
     def post(self, request, song_id):
+        user = request.user
         song = get_object_or_404(Song, id=song_id)
         form = CommentForm(request.POST)
         if form.is_valid():
             new_comment = form.save(commit=False)
             new_comment.song = song
+            new_comment.user = user
             new_comment.save()
-            return redirect(reverse('musics:detail', args=(song_id, )))
+            return redirect(reverse('musics:detail', args=(song_id,)))
         # 유효하지 않은 폼일 경우 댓글 목록과 함께 다시 렌더링
         comments = song.comments.all()
         return redirect(reverse('musics:detail', args=(song.id,)))

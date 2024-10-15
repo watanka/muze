@@ -52,3 +52,6 @@ client - web server
 web server -> form to access auth server -> client 
 client -> auth server
 auth server -> give token to client
+
+
+User와 UserProfile이 분리되어있기 때문에, 둘 중 하나 생성시 같이 생성될 수 있도록 설정해야함.

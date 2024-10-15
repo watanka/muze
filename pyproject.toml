@@ -10,6 +10,7 @@ python = "^3.12"
 spotipy = "^2.24.0"
 pandas = "^2.2.3"
 tqdm = "^4.66.5"
+django-allauth = "^65.0.2"
 
 
 [build-system]
