@@ -31,12 +31,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
     # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
-    
 ]
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.sites",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -55,7 +56,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.kakao",
+    "allauth.socialaccount.providers.github",
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,21 @@ AUTH_USER_MODEL = 'users.User'
 INTERNAL_IPS = [
     "127.0.0.1"
 ]
+
+# oauth setting
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': 'Ov23lixCxr89svvqNYXX',
+            'secret': '24f62ba0f6180885c6b4c2350bee31eb83b328ca',
+            'key': '',
+        }
+    },
+}
+
+ACCOUNT_EMAIL_REQUIRED = "none"  # 이메일 필수
+LOGIN_REDIRECT_URL = '/'  # 로그인 후 리다이렉트될 URL
+LOGOUT_REDIRECT_URL = '/'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
