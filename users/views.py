@@ -4,18 +4,18 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 
-from .models import UserProfile
+from .models import User
 from .forms import UserProfileForm
 # Create your views here.
 
 class IndexView(generic.ListView):
-    model = UserProfile
+    model = User
     template_name = "users/index.html"
     context_object_name = "user_list"
 
 
 class DetailView(generic.DetailView):
-    model = UserProfile
+    model = User
     template_name = "users/detail.html"
     
 def signup(request):

@@ -29,9 +29,6 @@ DEBUG = True
 # MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 
-ALLOWED_HOSTS = []
-
-
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -54,11 +51,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "debug_toolbar",
+    'corsheaders',
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.naver"
 ]
+
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -70,6 +71,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "corsheaders.middleware.CorsMiddleware"
 ]
 
 ROOT_URLCONF = "music_dashboard.urls"
@@ -122,10 +124,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-SOCIALACCOUNT_PROVIDERS = {
-    
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -165,9 +163,17 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': '',
         }
     },
+    # 'naver': {
+    #     'APP':{
+    #         'cleint_id': 'EAhYnMUAjzvHVvv8iadz',
+    #         'secret': '_Jbk3PYJep',
+    #         'key': ''
+    #     }
+    # }
 }
 
+ACCOUNT_FORMS = {'signup': 'users.forms.MyCustomSignupForm'}
 ACCOUNT_EMAIL_REQUIRED = "none"  # 이메일 필수
-LOGIN_REDIRECT_URL = 'users:create_user_profile'  # 로그인 후 리다이렉트될 URL
+LOGIN_REDIRECT_URL = '/'  # 로그인 후 리다이렉트될 URL
 LOGOUT_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

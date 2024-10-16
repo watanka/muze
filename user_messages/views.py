@@ -22,7 +22,7 @@ def send_message(request, song_id):
             selected_song.num_mention += 1
             selected_song.save(update_fields=['num_mention'])
 
-            return redirect(reverse('user_messages:inbox'))
+            return redirect(reverse('musics:detail', args=(song_id, )))
     else:
         form = MessageForm()
     return render(request, 'user_messages/send_message.html', {'form': form})

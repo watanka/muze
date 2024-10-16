@@ -57,7 +57,7 @@ class CommentView(View):
 def likes(request, song_id):
     song = get_object_or_404(Song, id=song_id)
     
-    user_profile = request.user.userprofile
+    user_profile = request.user
     if song in user_profile.liked_songs.all():
         # 유저가 이미 이 곡을 좋아요 했을 경우
         return redirect(reverse('musics:detail', args=[song_id]))
