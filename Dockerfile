@@ -6,24 +6,27 @@ RUN pip install "poetry==${POETRY_VERSION}"
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
+COPY README.md ./
 
 RUN poetry config virtualenvs.in-project true && \
-    poetry install --no-root --no-dev
+    poetry install --no-root && rm -rf $POETRY_CACHE_DIR
 
 
-## execute
-RUN poetry build
-
+#################
 FROM python:3.12-alpine
 
-COPY --from=builder /app/.venv ./.venv
-COPY --from=builder /app/dist .
-COPY . .
+WORKDIR /app
 
-ENV DJANGO_SETTINGS_MODULE=your_project_name.settings
-ENV PYTHONDONTWRITEBYTECODE 1
+COPY . .
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
+
+COPY --from=builder /app/.venv .venv
+COPY --from=builder /app ./
+
+ENV DJANGO_SETTINGS_MODULE=music_dashboard.settings
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PATH="/app/.venv/bin:$PATH"
 
 RUN python manage.py migrate && \
     python manage.py collectstatic --noinput

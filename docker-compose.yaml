@@ -1,0 +1,10 @@
+
+services:
+  django-app:
+
+  mysql:
+
+  redis:
+
+  prometheus:
+  
