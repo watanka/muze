@@ -5,6 +5,12 @@ RUN pip install "poetry==${POETRY_VERSION}"
 
 WORKDIR /app
 
+RUN apk update && \
+    apk add --no-cache \
+        python3-dev \
+        build-base \
+        mariadb-dev
+
 COPY pyproject.toml poetry.lock ./
 COPY README.md ./
 
@@ -17,19 +23,28 @@ FROM python:3.12-alpine
 
 WORKDIR /app
 
+RUN apk update && \
+    apk add --no-cache mariadb-dev
+
 COPY . .
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
-
 COPY --from=builder /app/.venv .venv
 COPY --from=builder /app ./
 
-ENV DJANGO_SETTINGS_MODULE=music_dashboard.settings
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH" \
+    DJANGO_SETTINGS_MODULE=music_dashboard.settings \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-RUN python manage.py migrate && \
-    python manage.py collectstatic --noinput
+# Install wait-for-it script to wait for MySQL to be ready
+# ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
+# RUN chmod +x /wait-for-it.sh
 
-CMD ["uvicorn", "music_dashboard.asgi:application"]
+# RUN python manage.py migrate && \
+#     python manage.py collectstatic --noinput
+
+CMD ["sh", "-c", ". /app/.venv/bin/activate && uvicorn music_dashboard.asgi:application --host 0.0.0.0 --port 8000"]
+
 
