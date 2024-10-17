@@ -1,30 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'musics/styles.css' %}">
+</head>
 <h1>노래 목록</h1>
-    <ul>
-        {% for song in song_list %}
-            <li>
-                <h2>{{ song.title }}</h2>
+    {% for song in song_list %}
+    <div class="carousel-container">
+        <!-- <div class="carousel">
+            <div class="card">
+                <img src="{{ song.album_cover.url }}" alt="{{ song.title }} 앨범 커버" style="width: 200px; height: auto;">
+                <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p>
+                <p>likes: {{ song.num_likes }}</p>
+            </div> -->
+                <h2><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a></h2>
                 <p>아티스트: {{ song.artist }}</p>
-                <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p> <!-- 날짜 포맷 -->
-                <img src="{{ song.album_cover.url }}" alt="{{ song.title }} 앨범 커버" style="width: 200px; height: auto;"> <!-- 앨범 커버 이미지 -->
-            </li>
-        {% empty %}
-            <li>등록된 노래가 없습니다.</li> <!-- 노래가 없을 때 -->
-        {% endfor %}
-    </ul>
+                <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p>
+                <p>likes: {{ song.num_likes }}</p>
+                <p>mentioned: {{ song.num_mention }}</p>
+                <img src="{{ song.album_cover }}" alt="{{ song.title }} 앨범 커버" style="width: 200px; height: auto;"> 앨범 커버 이미지
+            
+        <!-- </div> -->
+    </div>
+    
+    {% empty %}
+        <li>등록된 노래가 없습니다.</li> <!-- 노래가 없을 때 -->
+    {% endfor %}
+    <div class="prev-button">이전</div>
+    <div class="next-button">다음</div>
+
 <div class="pagination">
     <span class="step-links">
-        {%if song_list.has_previous %}
+        {%if page_obj.has_previous %}
             <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ song_list.previous_page_number }}">previous</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
         {% endif %}            
 
         <span class="current">
-            Page {{ song_list.number }} of {{song_list.paginator.num_pages }}.
+            Page {{ page_obj.number }} of {{page_obj.paginator.num_pages }}.
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ song_list.next_page_number }}">next</a>
-            <a href="?page={{ song_list.paginator.num_pages}}">last &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages}}">last &raquo;</a>
         {% endif %}
     </span>
 </div>
+
+<!-- <script>
+const CAROUSEL_LENGTH = document.querySelectorAll(".card").length - 1;
+let current = 0;
+
+const carousel = document.querySelector(".carousel");
+const prevButton = document.querySelector(".prev-button");
+const nextButton = document.querySelector(".next-button");
+
+const nextEvent = () => {
+  if (current !== CAROUSEL_LENGTH) {
+    carousel.style.transform = `translateX(${(current + 1) * -370}px)`;
+    current++;
+  } else {
+    current = 0;
+    carousel.style.transform = `translateX(0px)`;
+  }
+};
+
+const prevEvent = () => {
+  if (current !== 0) {
+    current--;
+    carousel.style.transform = `translateX(${current * -370}px)`;
+  } else {
+    current = CAROUSEL_LENGTH;
+    carousel.style.transform = `translateX(${CAROUSEL_LENGTH * -370}px)`;
+  }
+};
+
+nextButton.addEventListener("click", nextEvent);
+prevButton.addEventListener("click", prevEvent);
+
+</script> -->

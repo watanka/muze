@@ -25,11 +25,16 @@ SECRET_KEY = "django-insecure-s9j78j9!+i)&uh_%wxfxp9wr_h+=pl2-uw!+#i4(vkw-s0f2he
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# MEDIA_URL='/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
+MEDIA_URL='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATIC_URL = '/static/'
 
-ALLOWED_HOSTS = []
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # 프로젝트의 static 폴더 경로
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic 명령으로 모아질 경로
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 AUTHENTICATION_BACKENDS = [
@@ -42,6 +47,7 @@ AUTHENTICATION_BACKENDS = [
 # Application definition
 
 INSTALLED_APPS = [
+    "user_messages.apps.UserMessagesConfig",
     "users.apps.UsersConfig",
     "musics.apps.MusicsConfig",
     "polls.apps.PollsConfig",
@@ -53,13 +59,21 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "debug_toolbar",
+    'corsheaders',
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.naver",
+    "django_prometheus"
 ]
 
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
+
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -69,6 +83,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "corsheaders.middleware.CorsMiddleware"
 ]
 
 ROOT_URLCONF = "music_dashboard.urls"
@@ -121,10 +136,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-SOCIALACCOUNT_PROVIDERS = {
-    
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -139,8 +150,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -164,8 +173,16 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': '',
         }
     },
+    # 'naver': {
+    #     'APP':{
+    #         'cleint_id': 'EAhYnMUAjzvHVvv8iadz',
+    #         'secret': '_Jbk3PYJep',
+    #         'key': ''
+    #     }
+    # }
 }
 
+ACCOUNT_FORMS = {'signup': 'users.forms.MyCustomSignupForm'}
 ACCOUNT_EMAIL_REQUIRED = "none"  # 이메일 필수
 LOGIN_REDIRECT_URL = '/'  # 로그인 후 리다이렉트될 URL
 LOGOUT_REDIRECT_URL = '/'

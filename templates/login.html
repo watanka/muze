@@ -3,6 +3,7 @@
 {% if request.user.is_authenticated %}
     <a href="{% url 'account_logout' %}">Log out</a>
 {% else %}
-    <a href="{% provider_login_url 'github' %}">Login with Github</a>
+    <a href="{% provider_login_url 'github' %}">Login with github</a>
+    <a href="{% provider_login_url 'naver' %}">Login with naver</a>
     
 {% endif %}

@@ -12,8 +12,8 @@
         <h1>{{ user.nickname }}</h1>
         <img src="{{ user.profile_picture.url }}" alt="{{ user.nickname }} 프로필사진">
         {% if user.liked_songs %}
-            {% for song in user.liked_songs %}
-                <a href="{% url 'musics:detail' song_id=song.id %}">{{ song.title }}</a><br>
+            {% for song in user.liked_songs.all %}
+                <a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a><br>
             {% endfor %}
         {% else %}
             <p>좋아하는 노래가 없다</p>
