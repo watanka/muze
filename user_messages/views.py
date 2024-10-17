@@ -13,14 +13,14 @@ def send_message(request, song_id):
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
+            selected_song = get_object_or_404(Song, id=song_id)
+            selected_song.num_mention += 1
+            selected_song.save(update_fields=['num_mention'])
+
             message = form.save(commit=False)
             message.sender = request.user
             message.song_id = song_id
             message.save()
-
-            selected_song = get_object_or_404(Song, id=song_id)
-            selected_song.num_mention += 1
-            selected_song.save(update_fields=['num_mention'])
 
             return redirect(reverse('musics:detail', args=(song_id, )))
     else:

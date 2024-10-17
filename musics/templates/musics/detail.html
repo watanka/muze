@@ -12,7 +12,7 @@
 <body>
     <div class="container">
         <h1>{{ song.title }}</h1>
-        <img src="{{ song.album_cover.url }}" alt="{{ song.title }} 앨범 커버" style="width:200px;height:auto;">
+        <img src="{{ song.album_cover }}" alt="{{ song.title }} 앨범 커버" style="width:200px;height:auto;">
         <p>아티스트: {{ song.artist }}</p>
         <p>장르: {{ song.genre }}</p>
         <p>발매일: {{ song.release_date }}</p>

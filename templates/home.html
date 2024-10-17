@@ -8,8 +8,12 @@
 </head>
 <body>
     <!-- 헤더 포함 -->
-    {% include 'login.html' %}
-    {% include 'musics/index.html' %}
-
+    {% block content %}
+        {% include 'login.html' %}
+        <h2>Popular Songs</h2>
+        {% include 'musics/index.html' with song_list=popular_song_list %}
+        <h2>New Released Songs</h2>
+        {% include 'musics/index.html' with song_list=new_release_song_list %}
+    {% endblock %}
 </body>
 </html>

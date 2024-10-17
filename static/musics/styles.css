@@ -88,3 +88,35 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+.carousel-container {
+    overflow-x: auto;  /* 가로 스크롤 가능 */
+    white-space: nowrap;
+  }
+  
+.carousel {
+display: flex;
+}
+
+.card {
+display: inline-block;
+width: 200px;
+height: 300px;
+margin-right: 10px;
+background-color: #ccc;
+}
+
+.prev-button {
+margin-left: 250px;
+}
+  
+.prev-button,
+.next-button {
+cursor: pointer;
+margin-top: 20px;
+padding: 5px;
+border-radius: 5px;
+border: 1px solid black;
+display: inline-block;
+}
+  

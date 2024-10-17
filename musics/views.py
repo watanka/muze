@@ -12,6 +12,16 @@ class SongListView(ListView):
     template_name = "musics/index.html"
     context_object_name = "song_list"
     paginate_by=20
+
+    def get_queryset(self):
+        queryset = Song.objects.all()  # 기본 쿼리셋
+        order_by = self.request.GET.get('order', 'popularity')  # 정렬 기준, 기본은 popularity
+        if order_by == 'release_date':
+            queryset = queryset.order_by('-release_date')  # 최신순
+        elif order_by == 'popularity':
+            queryset = queryset.order_by('-num_likes')  # 인기순
+        # 다른 정렬 조건도 추가 가능
+        return queryset
     
 
 class SongDetailView(DetailView):

@@ -2,10 +2,10 @@ from allauth.account.forms import SignupForm
 from django import forms
 from .models import User
 
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['nickname', 'profile_picture']  # 사용자에게 입력받을 필드 목록
+# class UserProfileForm(forms.ModelForm):
+#     class Meta:
+#         model = User
+#         fields = ['nickname', 'profile_picture']  # 사용자에게 입력받을 필드 목록
 
 
 class MyCustomSignupForm(SignupForm):

@@ -25,9 +25,15 @@ SECRET_KEY = "django-insecure-s9j78j9!+i)&uh_%wxfxp9wr_h+=pl2-uw!+#i4(vkw-s0f2he
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# MEDIA_URL='/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
+MEDIA_URL='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # 프로젝트의 static 폴더 경로
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic 명령으로 모아질 경로
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -138,8 +144,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
