@@ -34,6 +34,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",  # 프로젝트의 static 폴더 경로
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic 명령으로 모아질 경로
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
     "django.middleware.security.SecurityMiddleware",
