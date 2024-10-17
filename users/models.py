@@ -1,12 +1,9 @@
 from django.db import models
-from django.conf import settings
 from django.db import models
-from django.contrib import admin
-# Create your models here.
-
 from django.contrib.auth.models import AbstractUser
 
 
+# Create your models here.
 class User(AbstractUser):
     nickname = models.CharField(max_length=20)
     liked_songs = models.ManyToManyField('musics.Song', related_name='liked_by_user', blank=True)
@@ -14,8 +11,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.nickname
-
-
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    

@@ -37,25 +37,62 @@ function Article(props){
 </article>
 }
 
+function Create(props){
+  return <article>
+    <h2>Create</h2>
+    <form onSubmit={event =>{
+      event.preventDefault();
+      const title = event.target.title.value;
+      const body = event.target.body.value;
+      props.onCreate(title, body);
+    }}>
+      <p><input type="text" name="title" placeholder="title"/></p>
+      <p><textarea name="body" placeholder="body"></textarea></p>
+      <p><input type="submit" value="Create"></input></p>
+    </form>
+
+    
+  </article>
+}
+
 function App() {
-  const topics = [
+  const [topics, setTopics] = useState([
     {id:1, title: 'html', body: 'html is ...'},
     {id:2, title: 'css', body: 'css is ...'},
     {id:3, title: 'js', body: 'js is ...'},
-  ]
+  ]);
+
+  const [nextId, setNextId] = useState(4);
   const [mode, setMode] = useState('WELCOME');
   const [id, setId] = useState(null);
   
   let content = null;
-  let title, body = '';
-  for (let i=0; i< topics.length;i++){
-    if (id === topics[i]['id']){
-      title = topics[i]['title'];
-      body = topics[i]['body'];
+  
+  
+  if(mode === 'WELCOME'){
+    content = <Article title='Welcome' body="Hello, WEB"></Article>  
+  }else if(mode === 'READ'){
+    let title, body = null;
+    for (let i=0; i< topics.length;i++){
+      if (id === topics[i]['id']){
+        title = topics[i]['title'];
+        body = topics[i]['body'];
+      }
     }
+    content = <Article title={title} body={"Hello," + body}></Article>
+  } else if(mode === 'CREATE'){
+    content = <Create onCreate={(_title, _body)=>{
+        const newTopic = {id: nextId, title: _title, body:_body};
+        const newTopics = [...topics];
+        newTopics.push(newTopic);
+        setTopics(newTopics);
+        setMode('READ');
+        setId(nextId);
+        setNextId(nextId+1);
+    }}></Create>
   }
 
-  content = <Article title={title} body={"Hello," + body}></Article>
+
   return (
     <div>
         <Header title="TITLE" onChangeMode={()=>{
@@ -65,6 +102,9 @@ function App() {
             setId(_id);
         }}></Nav>
         {content}
+        <p><a href="/create" onClick={event =>{
+
+        }}>Create</a></p>
     </div>
   );
 }
