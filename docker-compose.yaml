@@ -44,8 +44,8 @@ services:
       context: .
       dockerfile: Dockerfile
     command: >
-        sh -c ". /app/.venv/bin/activate && 
-        python manage.py migrate && python manage.py collectstatic --noinput"
+        poetry run python manage.py migrate && 
+        poetry run python manage.py collectstatic --noinput"
     environment:
       DATABASE_URL: mysql://silver:password@db/muze
     volumes:
@@ -57,7 +57,7 @@ services:
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
     ports:
-      - "9090:9090"
+      - "9091:9091"
     networks:
       - app_network
 
@@ -65,7 +65,7 @@ services:
     image: grafana/grafana
     restart: always
     ports:
-      - "3000:3000"
+      - "3100:3100"
     networks:
       - app_network
 

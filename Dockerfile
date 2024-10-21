@@ -27,24 +27,15 @@ RUN apk update && \
     apk add --no-cache mariadb-dev
 
 COPY . .
-ENV VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH"
 COPY --from=builder /app/.venv .venv
 COPY --from=builder /app ./
+RUN pip install poetry && poetry install
 
-ENV VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH" \
+ENV PATH="/app/.venv/bin:$PATH" \
     DJANGO_SETTINGS_MODULE=music_dashboard.settings \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Install wait-for-it script to wait for MySQL to be ready
-# ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
-# RUN chmod +x /wait-for-it.sh
-
-# RUN python manage.py migrate && \
-#     python manage.py collectstatic --noinput
-
-CMD ["sh", "-c", ". /app/.venv/bin/activate && uvicorn music_dashboard.asgi:application --host 0.0.0.0 --port 8000"]
+CMD ["poetry", "run", "uvicorn music_dashboard.asgi:application --host 0.0.0.0 --port 8000"]
 
 
