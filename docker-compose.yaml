@@ -44,8 +44,8 @@ services:
       context: .
       dockerfile: Dockerfile
     command: >
-        poetry run python manage.py migrate && 
-        poetry run python manage.py collectstatic --noinput"
+        python manage.py migrate && 
+        python manage.py collectstatic --noinput"
     environment:
       DATABASE_URL: mysql://silver:password@db/muze
     volumes:
