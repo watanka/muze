@@ -55,3 +55,8 @@ client -> auth server
 auth server -> give token to client  
 
 
+#### 음악 정보 Display 기준
+- 장르별
+- 최신별
+- 인기별
+- liked_song, mentioned_song, save_song 기준 추천별
