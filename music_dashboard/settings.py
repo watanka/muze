@@ -53,6 +53,8 @@ AUTHENTICATION_BACKENDS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'django_celery_beat',
+    'django_celery_results',
     "user_messages.apps.UserMessagesConfig",
     "users.apps.UsersConfig",
     "musics.apps.MusicsConfig",
@@ -120,11 +122,11 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         # "NAME": BASE_DIR / "db.sqlite3",
-        "NAME": os.getenv('MYSQL_DATABASE'),
-        "USER": os.getenv('MYSQL_USER'),
-        "PASSWORD": os.getenv('MYSQL_PASSWORD'),
-        "HOST": os.getenv('DB_HOST'),
-        "PORT": os.getenv('DB_PORT'),
+        "NAME": os.getenv('MYSQL_DATABASE', 'muze'),
+        "USER": os.getenv('MYSQL_USER', 'silver'),
+        "PASSWORD": os.getenv('MYSQL_PASSWORD', 'dmstjd6918'),
+        "HOST": os.getenv('DB_HOST', '127.0.0.1'),
+        "PORT": os.getenv('DB_PORT', 3306),
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
             "charset": 'utf8mb4',
@@ -203,3 +205,10 @@ ACCOUNT_EMAIL_REQUIRED = "none"  # 이메일 필수
 LOGIN_REDIRECT_URL = '/'  # 로그인 후 리다이렉트될 URL
 LOGOUT_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
