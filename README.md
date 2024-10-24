@@ -24,7 +24,7 @@ Song
 - rate
 
 User
-- saved
+- saved_song
 - comments
 - mates
 
@@ -49,9 +49,9 @@ User
 
 #### OAuth
 
-client - web server
-web server -> form to access auth server -> client 
-client -> auth server
-auth server -> give token to client
+client - web server  
+web server -> form to access auth server -> client   
+client -> auth server  
+auth server -> give token to client  
 
 

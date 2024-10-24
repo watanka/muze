@@ -4,15 +4,14 @@ services:
   db:
     image: mysql:8.0
     restart: always
-    environment:
-      MYSQL_DATABASE: muze
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: silver
-      MYSQL_PASSWORD: password
+    env_file:
+      - .env.docker
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - app_network
+    ports:
+      - "3306:3306"
 
   redis:
     image: redis:6.2
@@ -26,12 +25,21 @@ services:
       dockerfile: Dockerfile  # Dockerfile 경로를 설정
     restart: always
     environment:
-      DATABASE_URL: mysql://silver:password@db/muze
+      DOCKER_ENV: True
       REDIS_URL: redis://redis:6379/0
     depends_on:
       - db
       - redis
-      - migrations
+      # - migrations
+
+    command: >
+      bash -c "
+      chmod + ./wait-for-it.sh &&
+      ./wait-for-it.sh db:3306 -t 10 &&
+      python manage.py migrate && 
+      python manage.py collectstatic --noinput &&
+      uvicorn music_dashboard.asgi:application --host 0.0.0.0 --port 8000"
+  
     ports:
       - "8000:8000"
     volumes:
@@ -39,35 +47,40 @@ services:
     networks:
       - app_network
 
-  migrations:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: >
-        python manage.py migrate && 
-        python manage.py collectstatic --noinput"
-    environment:
-      DATABASE_URL: mysql://silver:password@db/muze
-    volumes:
-      - .:/app
+  # migrations:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   env_file:
+  #     - .env.docker
+  #   environment:
+  #     DOCKER_ENV: True
+  #   command: >
+  #       bash -c ./wait-for-it.sh db:3306 --timeout=30 -- &&
+  #       python manage.py migrate && 
+  #       python manage.py collectstatic --noinput
+  #   volumes:
+  #     - .:/app
+  #   networks:
+  #     - app_network
   
-  prometheus:
-    image: prom/prometheus
-    restart: always
-    volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
-    ports:
-      - "9091:9091"
-    networks:
-      - app_network
+  # prometheus:
+  #   image: prom/prometheus
+  #   restart: always
+  #   volumes:
+  #     - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+  #   ports:
+  #     - "9091:9091"
+  #   networks:
+  #     - app_network
 
-  grafana:
-    image: grafana/grafana
-    restart: always
-    ports:
-      - "3100:3100"
-    networks:
-      - app_network
+  # grafana:
+  #   image: grafana/grafana
+  #   restart: always
+  #   ports:
+  #     - "3100:3100"
+  #   networks:
+  #     - app_network
 
 volumes:
   db_data:
