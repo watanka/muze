@@ -11,10 +11,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
-
+import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+docker_env = os.getenv('DOCKER_ENV', False)
+print('docker env: ', docker_env)
+if docker_env:
+    dotenv.read_dotenv('.env.docker')
+else:
+    dotenv.read_dotenv('.env.local')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -23,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-s9j78j9!+i)&uh_%wxfxp9wr_h+=pl2-uw!+#i4(vkw-s0f2he"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 MEDIA_URL='/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -114,8 +120,15 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         # "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.getenv('MYSQL_DATABASE'),
+        "USER": os.getenv('MYSQL_USER'),
+        "PASSWORD": os.getenv('MYSQL_PASSWORD'),
+        "HOST": os.getenv('DB_HOST'),
+        "PORT": os.getenv('DB_PORT'),
         "OPTIONS": {
-            "read_default_file": str(BASE_DIR / "my.cnf")
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            "charset": 'utf8mb4',
+            'connect_timeout': 10,
         }
     }
 }
@@ -176,13 +189,13 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': '',
         }
     },
-    # 'naver': {
-    #     'APP':{
-    #         'cleint_id': 'EAhYnMUAjzvHVvv8iadz',
-    #         'secret': '_Jbk3PYJep',
-    #         'key': ''
-    #     }
-    # }
+    'naver': {
+        'APP':{
+            'cleint_id': 'EAhYnMUAjzvHVvv8iadz',
+            'secret': '_Jbk3PYJep',
+            'key': ''
+        }
+    }
 }
 
 ACCOUNT_FORMS = {'signup': 'users.forms.MyCustomSignupForm'}
