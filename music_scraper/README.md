@@ -35,3 +35,7 @@ spotipy.exceptions.SpotifyException: http status: 400, code:-1 - https://api.spo
 2. 스케쥴링화
 3. celery로 분산 처리
 4. scheduling -> message broker -> consumer(celery) 
+
+
+메세지큐에 등록하여, 노래를 찾을 수 있도록 구성.
+

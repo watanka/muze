@@ -5,32 +5,30 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'musics/styles.css' %}">
 </head>
-<h1>노래 목록</h1>
-    {% for song in song_list %}
-    <div class="carousel-container">
-        <!-- <div class="carousel">
-            <div class="card">
-                <img src="{{ song.album_cover.url }}" alt="{{ song.title }} 앨범 커버" style="width: 200px; height: auto;">
-                <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p>
-                <p>likes: {{ song.num_likes }}</p>
-            </div> -->
-                <h2><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a></h2>
-                <p>아티스트: {{ song.artist }}</p>
-                <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p>
-                <p>likes: {{ song.num_likes }}</p>
-                <p>mentioned: {{ song.num_mention }}</p>
-                <img src="{{ song.album_cover }}" alt="{{ song.title }} 앨범 커버" style="width: 200px; height: auto;"> 앨범 커버 이미지
-            
-        <!-- </div> -->
-    </div>
-    
-    {% empty %}
-        <li>등록된 노래가 없습니다.</li> <!-- 노래가 없을 때 -->
-    {% endfor %}
-    <div class="prev-button">이전</div>
-    <div class="next-button">다음</div>
 
-<div class="pagination">
+{% include "musics/search.html" %}
+{% if track_results %}
+  <h1>노래 목록</h1>
+    <div class="card-carousel">
+      <button class="prev" onclick="moveCarousel(-1)">&#10094;</button>
+      <div class="card-wrapper" id="song-list">
+        {% include "musics/_song_list.html" with song_list=track_results %}
+      </div>
+      <button class="next" onclick="moveCarousel(1)">&#10095;</button>
+    <div id="loading" style="display: none;">로딩 중...</div>
+</div>
+{% else %}
+  <h1>노래 목록</h1>
+    <div class="card-carousel">
+      <button class="prev" onclick="moveCarousel(-1)">&#10094;</button>
+      <div class="card-wrapper" id="song-list">
+        {% include "musics/_song_list.html" with song_list=song_list %}
+      </div>
+      <button class="next" onclick="moveCarousel(1)">&#10095;</button>
+      <div id="loading" style="display: none;">로딩 중...</div>
+    </div>
+{% endif %}
+<!-- <div class="pagination">
     <span class="step-links">
         {%if page_obj.has_previous %}
             <a href="?page=1">&laquo; first</a>
@@ -46,37 +44,12 @@
             <a href="?page={{ page_obj.paginator.num_pages}}">last &raquo;</a>
         {% endif %}
     </span>
-</div>
+</div> -->
 
-<!-- <script>
-const CAROUSEL_LENGTH = document.querySelectorAll(".card").length - 1;
-let current = 0;
-
-const carousel = document.querySelector(".carousel");
-const prevButton = document.querySelector(".prev-button");
-const nextButton = document.querySelector(".next-button");
-
-const nextEvent = () => {
-  if (current !== CAROUSEL_LENGTH) {
-    carousel.style.transform = `translateX(${(current + 1) * -370}px)`;
-    current++;
-  } else {
-    current = 0;
-    carousel.style.transform = `translateX(0px)`;
-  }
-};
-
-const prevEvent = () => {
-  if (current !== 0) {
-    current--;
-    carousel.style.transform = `translateX(${current * -370}px)`;
-  } else {
-    current = CAROUSEL_LENGTH;
-    carousel.style.transform = `translateX(${CAROUSEL_LENGTH * -370}px)`;
-  }
-};
-
-nextButton.addEventListener("click", nextEvent);
-prevButton.addEventListener("click", prevEvent);
-
-</script> -->
+<script>
+  function moveCarousel(direction) {
+    const carousel = document.getElementById("song-list");
+    const scrollAmount = 300; // 이동할 픽셀 양 설정
+    carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
+</script>

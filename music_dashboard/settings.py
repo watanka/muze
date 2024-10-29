@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-import os
+import os, sys
 from pathlib import Path
 import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.naver",
+    "allauth.socialaccount.providers.google",
     "django_prometheus"
 ]
 
@@ -135,6 +136,15 @@ DATABASES = {
     }
 }
 
+# TEST환경에서만 sqlite3 사용.
+if 'test' in sys.argv or 'test_coverage' in sys.argv:
+    DATABASES = {
+            'default':{
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': ':memory'
+            }
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -183,25 +193,57 @@ INTERNAL_IPS = [
 # oauth setting
 SITE_ID = 1
 
+GITHUB_OAUTH_CLIENT_ID = os.getenv("GITHUB_OAUTH_CLIENT_ID")
+GITHUB_OAUTH_CLIENT_SECRET = os.getenv("GITHUB_OAUTH_CLIENT_SECRET")
+
+NAVER_OAUTH_CLIENT_ID = os.getenv("NAVER_OAUTH_CLIENT_ID")
+NAVER_OAUTH_CLIENT_SECRET = os.getenv("NAVER_OAUTH_CLIENT_SECRET")
+
+GOOGLE_OAUTH_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
+
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         'APP': {
-            'client_id': 'Ov23lixCxr89svvqNYXX',
-            'secret': '24f62ba0f6180885c6b4c2350bee31eb83b328ca',
+            'client_id': GITHUB_OAUTH_CLIENT_ID,
+            'secret': GITHUB_OAUTH_CLIENT_SECRET,
             'key': '',
         }
     },
     'naver': {
         'APP':{
-            'cleint_id': 'EAhYnMUAjzvHVvv8iadz',
-            'secret': '_Jbk3PYJep',
+            'client_id': NAVER_OAUTH_CLIENT_ID,
+            'secret': NAVER_OAUTH_CLIENT_SECRET,
+            'key': ''
+        }
+    },
+    'google' : {
+        'APP':{
+            'client_id': GOOGLE_OAUTH_CLIENT_ID,
+            'secret': GOOGLE_OAUTH_CLIENT_SECRET,
             'key': ''
         }
     }
 }
 
-ACCOUNT_FORMS = {'signup': 'users.forms.MyCustomSignupForm'}
-ACCOUNT_EMAIL_REQUIRED = "none"  # 이메일 필수
+SOCIAL_AUTH_GITHUB_REDIRECT_URI = 'http://localhost:8000/accounts/github/login/callback/'  # 로컬 개발 시
+SOCIAL_AUTH_NAVER_REDIRECT_URI = 'http://localhost:8000/accounts/naver/login/callback/'  # 로컬 개발 시
+SOCIAL_AUTH_GOOGLE_REDIRECT_URI = 'http://127.0.0.1:8000/accounts/google/login/callback/'  # 로컬 개발 시
+
+ACCOUNT_FORMS = {
+    'add_email': 'allauth.account.forms.AddEmailForm',
+    'change_password': 'allauth.account.forms.ChangePasswordForm',
+    'confirm_login_code': 'allauth.account.forms.ConfirmLoginCodeForm',
+    'login': 'allauth.account.forms.LoginForm',
+    'request_login_code': 'allauth.account.forms.RequestLoginCodeForm',
+    'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    'set_password': 'allauth.account.forms.SetPasswordForm',
+    'signup': 'allauth.account.forms.SignupForm',
+    'user_token': 'allauth.account.forms.UserTokenForm',
+}
+
+ACCOUNT_USERNAME_REQUIRED = True
 LOGIN_REDIRECT_URL = '/'  # 로그인 후 리다이렉트될 URL
 LOGOUT_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

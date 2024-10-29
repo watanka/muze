@@ -6,6 +6,13 @@ services:
     restart: always
     env_file:
       - .env.docker
+    environment:
+      DEBUG: True
+      MYSQL_DATABASE: muze
+      MYSQL_USER: silver
+      MYSQL_ROOT_PASSWORD: dmstjd6918
+      MYSQL_PASSWORD: dmstjd6918
+      DB_PORT: 3306
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -46,23 +53,6 @@ services:
       - .:/app
     networks:
       - app_network
-
-  # migrations:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   env_file:
-  #     - .env.docker
-  #   environment:
-  #     DOCKER_ENV: True
-  #   command: >
-  #       bash -c ./wait-for-it.sh db:3306 --timeout=30 -- &&
-  #       python manage.py migrate && 
-  #       python manage.py collectstatic --noinput
-  #   volumes:
-  #     - .:/app
-  #   networks:
-  #     - app_network
   
   # prometheus:
   #   image: prom/prometheus

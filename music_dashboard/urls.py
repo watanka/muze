@@ -31,9 +31,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # 1. Login Form (로그인 폼 추가)
-        context['login_form'] = MyCustomSignupForm()
-
+        
         context['popular_song_list'] = Song.objects.all().order_by('-num_likes')[:10]
         context['new_release_song_list'] = Song.objects.all().order_by('-release_date')[:10]
 

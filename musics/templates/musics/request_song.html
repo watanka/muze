@@ -1,0 +1,8 @@
+{% block content %}
+<h2>곡 요청하기</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">검색</button>
+</form>
+{% endblock %}

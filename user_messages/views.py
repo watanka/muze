@@ -1,5 +1,6 @@
 from django.apps import apps
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Message
@@ -26,6 +27,11 @@ def send_message(request, song_id):
     else:
         form = MessageForm()
     return render(request, 'user_messages/send_message.html', {'form': form})
+
+@login_required
+def unread(request):
+    unread = Message.objects.filter(receiver=request.user).filter(is_read=False)
+    return JsonResponse({'unread_messages_count': len(unread)})
 
 @login_required
 def inbox(request):

@@ -20,3 +20,8 @@ class MyCustomSignupForm(SignupForm):
             user.profile_picture = self.cleaned_data['profile_picture']
         user.save()
         return user
+    
+class AdditionalInfoForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['nickname', 'profile_picture']

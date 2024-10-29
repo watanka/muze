@@ -1,0 +1,10 @@
+<form method = 'get' action="{% url 'musics:search' %}">
+    {% csrf_token %}
+    <div>
+        {{ form.subject.label_tag}} {{ form.category }}
+    </div>
+    <div>
+        {{ form.keyword.label_tag }} {{ form.keyword}}
+    </div>
+    <button type="submit" class="btn btn-primary">검색</button>
+</form>
