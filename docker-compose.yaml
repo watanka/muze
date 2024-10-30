@@ -7,7 +7,6 @@ services:
     env_file:
       - .env.docker
     environment:
-      DEBUG: True
       MYSQL_DATABASE: muze
       MYSQL_USER: silver
       MYSQL_ROOT_PASSWORD: dmstjd6918
@@ -32,7 +31,7 @@ services:
       dockerfile: Dockerfile  # Dockerfile 경로를 설정
     restart: always
     environment:
-      DOCKER_ENV: True
+      DOCKER_ENV: 'true'
       REDIS_URL: redis://redis:6379/0
     depends_on:
       - db
