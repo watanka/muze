@@ -1,0 +1,57 @@
+/* 전체 카드 캐러셀 */
+.card-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  /* 카드들을 담는 래퍼 */
+  .card-wrapper {
+    display: flex;               /* 카드들을 옆으로 나란히 정렬 */
+    overflow-x: auto;            /* 가로 스크롤을 허용 */
+    overflow-y: hidden;          /* 세로 스크롤은 숨김 */
+    scroll-behavior: smooth;     /* 부드럽게 스크롤 이동 */
+    padding: 10px;
+    gap: 10px;                   /* 카드 간격 */
+    width: calc(100% - 60px);
+    margin: 0 auto;
+  }
+  
+  /* 개별 카드 */
+  .card {
+    min-width: 200px;            /* 카드의 최소 너비를 지정해 가로로 정렬되도록 */
+    flex-shrink: 0;              /* 카드가 줄어들지 않게 */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 이전/다음 버튼 */
+  .prev, .next {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 1;
+  }
+  
+  .prev {
+    left: 10px;
+  }
+  
+  .next {
+    right: 10px;
+  }
+  

@@ -1,0 +1,27 @@
+<!-- templates/musics/song_detail.html -->
+{% load static %}  <!-- static 태그를 로드 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ song.title }} - 상세 정보</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- CSS 파일 링크 -->
+</head>
+<body>
+    <div class="container">
+        <h1>{{ song.title }}</h1>
+        <img src="{{ song.album_cover }}" alt="{{ song.title }} 앨범 커버" style="width:200px;height:auto;">
+        <p>아티스트: {{ song.artist }}</p>
+        <p>장르: {{ song.genre }}</p>
+        <p>발매일: {{ song.release_date }}</p>
+        <p>liked: {{ song.num_likes }}</p>
+        <p>mentioned: {{ song.num_mention }}</p>
+        <a href="{% url 'user_messages:send_message' song.id %}" method="post">친구에게 추천하기</a>
+        <a href="{% url 'musics:like' song.id %}" method="post">좋아요!</a>
+        <!-- 댓글 작성 폼 -->
+        {% include 'musics/comments.html' %}
+    </div>
+</body>
+</html>

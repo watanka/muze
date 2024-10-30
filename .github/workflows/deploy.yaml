@@ -1,0 +1,44 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # 또는 원하는 브랜치 이름
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up SSH key
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}  # GitHub Secrets에 SSH 키 저장
+      run: |
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+
+    - name: SSH to EC2 and deploy
+      env:
+        HOST: ${{ secrets.EC2_HOST }}  # GitHub Secrets에 EC2 호스트 IP 저장
+        USER: ${{ secrets.EC2_USER }}  # GitHub Secrets에 EC2 사용자 이름 저장
+      run: |
+        ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
+          # 필요한 패키지 설치
+          sudo apt-get update
+          sudo apt-get install -y docker.io docker-compose
+
+          # 코드 저장소 클론 (또는 업데이트)
+          if [ ! -d /opt/muze ]; then
+            git clone https://github.com/watanka/muze.git /opt/muze
+          else
+            cd /opt/muze
+            git pull origin main  # 최신 코드로 업데이트
+          fi
+
+          # Docker 이미지 빌드 및 실행
+          cd /opt/muze  # Dockerfile과 docker-compose.yml이 있는 경로로 이동
+          docker-compose up -d --build  # 서비스 빌드 및 시작
+        EOF

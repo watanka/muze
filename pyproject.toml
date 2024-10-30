@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "music-dashboard"
+version = "0.1.0"
+description = ""
+authors = ["Eunsung Shin <eunsung.shin@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+spotipy = "^2.24.0"
+pandas = "^2.2.3"
+tqdm = "^4.66.5"
+django-allauth = "^65.0.2"
+django-prometheus = "^2.3.1"
+django-cors-headers = "^4.5.0"
+flake8 = "^7.1.1"
+gunicorn = "^23.0.0"
+uvicorn = "^0.32.0"
+whitenoise = "^6.7.0"
+django-debug-toolbar = "^4.4.6"
+pillow = "^11.0.0"
+mysqlclient = "^2.2.4"
+django-dotenv = "^1.4.2"
+django = "^5.1.2"
+celery = "^5.4.0"
+django-celery-beat = "^2.7.0"
+django-celery-results = "^2.5.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

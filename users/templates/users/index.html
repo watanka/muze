@@ -1,0 +1,13 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'users/style.css' %}">
+{% if user_list %}
+    <ul>
+        {% for user in user_list %}
+            <li><a href="{% url 'users:detail' user.id %}">{{ user.nickname }}</a></li>
+            <img src="{{ user.profile_picture.url }}" alt="{{ user.nickname }} 프로필사진" style="width:200px;height:auto;">
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No users are available.</p>
+{% endif %}
+    
