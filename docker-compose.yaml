@@ -44,7 +44,7 @@ services:
       ./wait-for-it.sh db:3306 -t 10 &&
       python manage.py migrate && 
       python manage.py collectstatic --noinput &&
-      uvicorn music_dashboard.asgi:application --host 0.0.0.0 --port 8000"
+      run.sh"
   
     ports:
       - "8000:8000"

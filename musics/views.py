@@ -9,6 +9,10 @@ from django.utils.decorators import method_decorator
 from .models import Song, Comment
 from .form import CommentForm, SearchForm
 
+import logging
+
+logger = logging.getLogger('django')
+
 class SongListView(ListView):
     model = Song
     template_name = "musics/index.html"
@@ -20,13 +24,17 @@ class SongListView(ListView):
 
         order_by = self.request.GET.get('order', 'popularity')  # 정렬 기준, 기본은 popularity
         if order_by == 'release_date':
+            logger.info("Song 전체 목록 최신순")
             queryset = queryset.order_by('-release_date')  # 최신순
         elif order_by == 'num_likes':
+            logger.info("Song 전체 목록 like순")
             queryset = queryset.order_by('-num_likes')  # 인기순
         elif order_by == 'num_mentions':
+            logger.info("Song 전체 목록 mention순")
             queryset = queryset.order_by('-num_mention')
         # 다른 정렬 조건도 추가 가능
         elif order_by == 'num_comments':
+            logger.info("Song 전체 목록 comment순")
             queryset = queryset.annotate(num_comments=Count('comments')).order_by('-num_comments')
         return queryset
     
@@ -44,7 +52,7 @@ class SongDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        logger.info(f'Song detail 조회')
         context['comments'] = self.object.comments.all()
         return context
 
