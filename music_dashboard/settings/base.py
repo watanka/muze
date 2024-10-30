@@ -14,6 +14,8 @@ from pathlib import Path
 import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok = True)
 
 docker_env = os.getenv('DOCKER_ENV', 'false')
 if docker_env == 'true':
@@ -30,6 +32,7 @@ SECRET_KEY = "django-insecure-s9j78j9!+i)&uh_%wxfxp9wr_h+=pl2-uw!+#i4(vkw-s0f2he
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
 
 MEDIA_URL='/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -287,7 +290,7 @@ DEFAULT_LOGGING = {
             'level': 'INFO',
             'filters': ['require_debug_false'],
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs/muse.log',
+            'filename': LOG_DIR / 'muse.log',
             'maxBytes': 1024 * 1024 * 5, # 5MB
             'backupCount': 5,
             'formatter': 'standard'
@@ -302,6 +305,15 @@ DEFAULT_LOGGING = {
             'handlers': ['django.server'],
             'level': 'INFO',
             'propagate': False,
+        },
+        'allauth':{
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True
+        },
+        'user_message':{
+            'handlers': ['console', 'file'],
+            'level': 'INFO'
         }
     }
 }

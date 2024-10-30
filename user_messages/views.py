@@ -5,7 +5,9 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Message
 from .forms import MessageForm
-# Create your views here.
+
+import logging
+logger = logging.getLogger('user_message')
 
 Song = apps.get_model('musics', 'Song')
 
@@ -22,7 +24,9 @@ def send_message(request, song_id):
             message.sender = request.user
             message.song_id = song_id
             message.save()
-
+            
+            logger.info(f"Message sent by {request.user.username} to {request.POST.get('receiver')}: song {selected_song.title}")
+            
             return redirect(reverse('musics:detail', args=(song_id, )))
     else:
         form = MessageForm()
@@ -36,6 +40,7 @@ def unread(request):
 @login_required
 def inbox(request):
     messages = Message.objects.filter(receiver=request.user).order_by('-timestamp')
+
     return render(request, 'user_messages/inbox.html', {'messages': messages})
 
 @login_required
@@ -43,4 +48,6 @@ def read_message(request, message_id):
     message = Message.objects.get(id = message_id, receiver = request.user)
     message.is_read = True
     message.save()
+
+    logger.info(f"User {request.user.username} read message {message_id}")
     return render(request, 'user_messages/read_message.html', {'message': message})
