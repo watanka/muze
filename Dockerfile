@@ -5,7 +5,10 @@ RUN pip install "poetry==${POETRY_VERSION}"
 
 COPY pyproject.toml poetry.lock ./
 COPY wait-for-it.sh /usr/local/bin/wait-for-it
-RUN chmod +x /usr/local/bin/wait-for-it
+RUN chmod +x /usr/local/bin/wait-for-it 
+
+COPY run.sh /app/run.sh
+RUN chmod +x /app/run.sh
 
 RUN apt-get update && apt-get install -y \
         python3-dev \
@@ -20,10 +23,10 @@ RUN poetry config virtualenvs.create false && poetry install
 WORKDIR /app
 COPY . /app
 
-ENV DJANGO_SETTINGS_MODULE=music_dashboard.settings \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
 
-CMD ["uvicorn", "music_dashboard.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./run.sh"]
 
 

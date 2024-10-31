@@ -330,15 +330,16 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-allauth"
-version = "65.0.2"
+version = "65.1.0"
 description = "Integrated set of Django applications addressing authentication, registration, account management as well as 3rd party (social) account authentication."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_allauth-65.0.2.tar.gz", hash = "sha256:6b5b3a7a65b1c28078b6eb0dd234310b58a44e8addfd187dc30437b0b2bc41a5"},
+    {file = "django_allauth-65.1.0.tar.gz", hash = "sha256:ab2c32c51797bab1e7a334f37afa61ef4a88c6f13dfd7bd898a16e2b7e567ef0"},
 ]
 
 [package.dependencies]
+asgiref = ">=3.8.1"
 Django = ">=4.2"
 
 [package.extras]
@@ -466,6 +467,21 @@ files = [
 mccabe = ">=0.7.0,<0.8.0"
 pycodestyle = ">=2.12.0,<2.13.0"
 pyflakes = ">=3.2.0,<3.3.0"
+
+[[package]]
+name = "graypy"
+version = "2.1.0"
+description = "Python logging handlers that send messages in the Graylog Extended Log Format (GELF)."
+optional = false
+python-versions = "*"
+files = [
+    {file = "graypy-2.1.0-py2.py3-none-any.whl", hash = "sha256:5df0102ed52fdaa24dd579bc1e4904480c2c9bbb98917a0b3241ecf510c94207"},
+    {file = "graypy-2.1.0.tar.gz", hash = "sha256:fd8dc4a721de1278576d92db10ac015e99b4e480cf1b18892e79429fd9236e16"},
+]
+
+[package.extras]
+amqp = ["amqplib (==1.0.2)"]
+docs = ["sphinx (>=2.1.2,<3.0.0)", "sphinx-autodoc-typehints (>=1.6.0,<2.0.0)", "sphinx-rtd-theme (>=0.4.3,<1.0.0)"]
 
 [[package]]
 name = "gunicorn"
@@ -1102,4 +1118,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "801fa92ae582c1da606c585a2140fbe6fd5b11b8e8609b271471325a122d4024"
+content-hash = "40bff92370b2758aab617bb39594c2eeafd454f4e29b9df1198dff348da6492e"

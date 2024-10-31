@@ -14,8 +14,9 @@ from pathlib import Path
 import dotenv
 import graypy
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_DIR = BASE_DIR / 'logs'
 LOG_DIR.mkdir(exist_ok = True)
 
@@ -79,8 +80,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.naver",
-    "allauth.socialaccount.providers.google",
-    "django_prometheus"
+    # "allauth.socialaccount.providers.google",
+    # "django_prometheus"
 ]
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
@@ -227,6 +228,13 @@ SOCIALACCOUNT_PROVIDERS = {
             'client_id': GOOGLE_OAUTH_CLIENT_ID,
             'secret': GOOGLE_OAUTH_CLIENT_SECRET,
             'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
         }
     }
 }

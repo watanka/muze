@@ -42,9 +42,7 @@ services:
       bash -c "
       chmod + ./wait-for-it.sh &&
       ./wait-for-it.sh db:3306 -t 10 &&
-      python manage.py migrate && 
-      python manage.py collectstatic --noinput &&
-      run.sh"
+      sh run.sh"
   
     ports:
       - "8000:8000"
@@ -52,27 +50,48 @@ services:
       - .:/app
     networks:
       - app_network
-  
-  # prometheus:
-  #   image: prom/prometheus
-  #   restart: always
-  #   volumes:
-  #     - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
-  #   ports:
-  #     - "9091:9091"
-  #   networks:
-  #     - app_network
 
-  # grafana:
-  #   image: grafana/grafana
-  #   restart: always
-  #   ports:
-  #     - "3100:3100"
-  #   networks:
-  #     - app_network
+  # MongoDB for Graylog
+  mongo:
+    image: mongo:4.0
+    restart: always
+    networks:
+      - app_network
+    volumes:
+      - mongo_data:/data/db
+
+  # Elasticsearch for Graylog
+  elasticsearch:
+    image: elasticsearch:7.10.1
+    restart: always
+    environment:
+      - discovery.type=single-node
+    networks:
+      - app_network
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  # Graylog
+  graylog:
+    image: graylog/graylog:4.0
+    restart: always
+    environment:
+      - GRAYLOG_PASSWORD_SECRET=8c6027627521dfbf64bcb25a93db8b8289f6ad13ca77bc89dc798b572bf82c31
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9000/
+    ports:
+      - "9000:9000"
+      - "12201:12201"  # Graylog input
+    networks:
+      - app_network
+    depends_on:
+      - mongo
+      - elasticsearch
 
 volumes:
   db_data:
+  mongo_data:
+  elasticsearch_data:
 
 networks:
   app_network:
