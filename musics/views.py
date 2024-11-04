@@ -190,3 +190,7 @@ def request_song(request):
         #     song.save()
             return render(request, 'musics/search_results.html', {'track_results': result, 'form': form})
     return redirect(reverse('musics:index'))
+
+
+def add_today_song(request):
+    return redirect(reverse('musics:index'))

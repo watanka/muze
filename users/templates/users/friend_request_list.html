@@ -1,0 +1,19 @@
+{% block content %}
+  <h1>Friend Requests</h1>
+  {% if object_list %}
+    <ul>
+      {% for request in object_list %}
+        <li>
+          From: {{ request.from_user.username }} 
+          <br>
+          Sent on: {{ request.created_at|date:"F j, Y, g:i a" }}
+          <br>
+          <a href="{% url 'users:accept_request' request.id %}">Accept</a> | 
+          <a href="{% url 'users:decline_request' request.id %}">Decline</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No friend requests found.</p>
+  {% endif %}
+{% endblock %}

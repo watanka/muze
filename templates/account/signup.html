@@ -1,0 +1,68 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Sign Up" %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>{% trans "Sign Up" %}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div>
+            {{ form.username.label_tag }} {{ form.username }} {{ form.username.errors }}
+        </div>
+        <div>
+            {{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}
+        </div>
+        <div>
+            {{ form.password1.label_tag }} {{ form.password1 }} {{ form.password1.errors }}
+        </div>
+        <div>
+            {{ form.password2.label_tag }} {{ form.password2 }} {{ form.password2.errors }}
+        </div>
+        <div>
+            {{ form.nickname.label_tag }} {{ form.nickname }} {{ form.nickname.errors }}
+        </div>
+        <button type="submit">{% trans "Sign Up" %}</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#check-nickname').click(function() {
+                // 매번 최신 입력 값을 가져옴
+                var nickname = $('#id_nickname').val();  
+                if (nickname) {
+                    $.ajax({
+                        url: "{% url 'users:check_nickname' %}",
+                        data: {
+                            'nickname': nickname
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data); // 응답 결과를 콘솔에 출력하여 확인
+                            if (data) {  // data가 true일 때
+                                $('#nickname-result').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                            } else {  // data가 false일 때
+                                $('#nickname-result').text('사용 가능한 닉네임입니다.').css('color', 'green');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText); // 오류가 발생했을 경우 콘솔에 출력
+                        }
+                    });
+                } else {
+                    $('#nickname-result').text('닉네임을 입력하세요.').css('color', 'orange');
+                }
+            });
+        });
+    </script>
+    </script>
+</body>
+</html>

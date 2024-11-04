@@ -24,7 +24,6 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 
 from musics.models import Song
 from musics.views import SongListView
-from users.forms import MyCustomSignupForm
 
 class HomeView(TemplateView):
     template_name = 'home.html'

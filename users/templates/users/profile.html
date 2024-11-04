@@ -9,17 +9,35 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-        <h1>이름: {{ user.nickname }}</h1>
-        <img src="{{ user.profile_picture.url }}" alt="{{ user.nickname }} 프로필사진">
-        <h3>좋아하는 노래</h3>
-        {% if user.liked_songs %}
-            <ul>
-                {% for song in user.liked_songs.all %}    
-                    <li><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a><br></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>좋아하는 노래가 없다</p>
+    <h1>이름: {{ user.nickname }}</h1>
+    <img src="{{ user.profile_picture.url }}" alt="{{ user.nickname }} 프로필사진">
+    
+    <h3>좋아하는 노래</h3>
+    {% if user.liked_songs %}
+        <ul>
+            {% for song in user.liked_songs.all %}    
+                <li><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a><br></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>좋아하는 노래가 없다</p>
+    {% endif %}
+    
+    <h3>오늘의 노래</h3>
+    {% if user.today_song %}
+        <p><a href="{% url 'musics:detail' user.today_song.id %}">{{ user.today_song.title }}</a></p>
+    {% else %}
+        <p>오늘의 노래가 없습니다.</p>
+        {% if request.user == user %}
+            <a href="{% url 'musics:index' %}">오늘의 노래 등록하러가기</a>
         {% endif %}
+    {% endif %}
+    
+    {% if request.user.is_authenticated and request.user != user %}
+        <form action="{% url 'users:send_friend_request' user.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">친구 추가</button>
+        </form>
+    {% endif %}
 </body>
 </html>

@@ -144,13 +144,13 @@ DATABASES = {
 }
 
 # TEST환경에서만 sqlite3 사용.
-if 'test' in sys.argv or 'test_coverage' in sys.argv:
-    DATABASES = {
-            'default':{
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': ':memory'
-            }
-    }
+# if 'test' in sys.argv or 'test_coverage' in sys.argv:
+DATABASES = {
+        'default':{
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory'
+        }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -252,7 +252,7 @@ ACCOUNT_FORMS = {
     'reset_password': 'allauth.account.forms.ResetPasswordForm',
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'set_password': 'allauth.account.forms.SetPasswordForm',
-    'signup': 'allauth.account.forms.SignupForm',
+    'signup': 'users.forms.UserSignupForm',
     'user_token': 'allauth.account.forms.UserTokenForm',
 }
 
