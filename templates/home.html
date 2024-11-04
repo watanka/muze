@@ -7,6 +7,11 @@
     <title>{% block title %}제목{% endblock %}</title>
 </head>
 <body>
+    <div>
+        <a href="{% url 'musics:plus' %}" method="post">
+            <button type="submit">plus</button>
+        </a>
+    </div>
     {% if user.is_authenticated %}
         <div class="inbox-icon">
             <a href="{% url 'user_messages:inbox' %}">
@@ -14,6 +19,7 @@
                 <span id="unread-messages-badge" class="badge" style="display: none;">{{ unread_messages_count }}</span>
             </a>
         </div>
+        
             <script>
                     document.addEventListener("DOMContentLoaded", function(){
                         function updateUnreadMessages(){

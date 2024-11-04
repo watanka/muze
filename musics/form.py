@@ -1,6 +1,7 @@
 from django import forms
 from .models import Song, Comment
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
@@ -9,7 +10,7 @@ class CommentForm(forms.ModelForm):
 class SearchForm(forms.Form):
     CATEGORY_CHOICES = [
         ('artist', '가수'),
-        ('title', '곡 이름')
+        ('track', '곡 이름')
     ] # track만 동작. 나머지 category는 구현X
 
     category = forms.ChoiceField(

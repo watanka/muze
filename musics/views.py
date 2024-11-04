@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .models import Song, Comment
 from .form import CommentForm, SearchForm
+from music_dashboard.tasks import persist
 
 import logging
 
@@ -112,7 +113,7 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 def parse_spotify_result(data):
     result = []
-
+    ## 3개만
     for track in data['tracks']['items'][:3]:
         title = track['name']
         track_popularity = track['popularity']
@@ -136,22 +137,43 @@ def parse_spotify_result(data):
 
 
 def search_view(request):
+    ### TODO
     if request.method == 'GET':
         form = SearchForm(request.GET)
         if form.is_valid():
             category = form.cleaned_data['category']
             keyword = form.cleaned_data['keyword']
 
-            query_result = Song.objects.filter(**{f'{category}__icontains': keyword})
-
-            # spotify api로 검색   
-            # query = f'{keyword}'
-            # data = sp.search(q=query, type=category)
+            if category == 'track':
+                category = 'title'
             
-            # result = parse_spotify_result(data)
+            query_result = None
+            try:
+                query_result = Song.objects.filter(**{f'{category}__icontains': keyword})
+            except Exception as e:
+                print(f'error log: {e}' )
+            
+            print('query result: ', query_result)
+            print('category: ', category)
+            print('keyword: ', keyword)
+            # if query_result.exists():
+            if len(query_result) > 0:
+                return render(request, 'musics/search_results.html', {'track_results': query_result})
+            else:
+                if category == 'title':
+                    category = 'track'
+                # spotify api로 검색   
+                query = f'{keyword}'
+                data = sp.search(q=query, type=category)
+    
+                result = parse_spotify_result(data)
+                
+                for res in result:
+                    print('비동기로 음악을 저장합니다')
+                    persist.delay(**res)
 
-            # 결과를 컨텍스트에 추가하여 템플릿 렌더링
-            return render(request, 'musics/search_results.html', {'track_results': query_result})
+                # 결과를 컨텍스트에 추가하여 템플릿 렌더링
+                return render(request, 'musics/search_results.html', {'track_results': result})
     else:
         form = SearchForm()
 
@@ -194,3 +216,11 @@ def request_song(request):
 
 def add_today_song(request):
     return redirect(reverse('musics:index'))
+
+def plus(request):
+    import random
+    from music_dashboard.tasks import celery_plus
+    num1 = random.randint(0, 10)
+    num2 = random.randint(0, 10)
+    celery_plus.delay(num1,num2)
+    return render(request, 'musics/plus_result.html', {"result": '완료'})

@@ -1,9 +1,18 @@
-# from celery import shared_task
-# import os
+from celery import shared_task
+from musics.models import Song
 
-# import spotipy
-# from spotipy.oauth2 import SpotifyClientCredentials
-# from datetime import datetime
+@shared_task
+def persist(title, track_popularity, artists):
+    Song.objects.create(
+        title = title,
+        track_popularity = track_popularity,
+        artist = artists,
+
+    )
+
+@shared_task
+def celery_plus(num1, num2):
+    return num1 + num2
 
 # from ..music_scraper.scrape import MusicCollector, preprocess_data, persist
 

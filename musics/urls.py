@@ -10,4 +10,5 @@ urlpatterns = [
     path("search", views.search_view, name="search"),
     path("request_song", views.request_song, name="request_song"),
     path("add_today_song", views.add_today_song, name="add_today_song"),
+    path("plus/", views.plus, name="plus")
 ]
