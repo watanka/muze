@@ -2,17 +2,16 @@ from celery import shared_task
 from musics.models import Song
 
 @shared_task
-def persist(title, track_popularity, artists):
+def persist(title, track_popularity, artists, album, release_date, album_cover):
     Song.objects.create(
         title = title,
         track_popularity = track_popularity,
         artist = artists,
-
+        album = album,
+        album_cover = album_cover,
+        release_date = release_date
     )
-
-@shared_task
-def celery_plus(num1, num2):
-    return num1 + num2
+    print('곡 저장 완료')
 
 # from ..music_scraper.scrape import MusicCollector, preprocess_data, persist
 

@@ -24,8 +24,8 @@
     {% endif %}
     
     <h3>오늘의 노래</h3>
-    {% if user.today_song %}
-        <p><a href="{% url 'musics:detail' user.today_song.id %}">{{ user.today_song.title }}</a></p>
+    {% if active_today_song %}
+        <p><a href="{% url 'musics:detail' active_today_song.id %}">{{ active_today_song.title }}</a></p>
     {% else %}
         <p>오늘의 노래가 없습니다.</p>
         {% if request.user == user %}

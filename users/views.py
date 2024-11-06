@@ -16,7 +16,11 @@ from allauth.account.signals import (user_logged_in,
                                      password_changed)
 from allauth.socialaccount.signals import pre_social_login
 
+from django.utils import timezone
+
+
 from .models import User, FriendRequest, UserActivity
+from musics.models import TodaySong
 import logging
 
 logger = logging.getLogger('allauth')
@@ -31,6 +35,19 @@ class IndexView(generic.ListView):
 class ProfileView(generic.DetailView):
     model = User
     template_name = "users/profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+
+        today_song = TodaySong.objects.filter(
+                    user_id=user.id,
+                    expired_at__gt=timezone.now()
+                ).order_by('-created_at').first()
+
+        context['active_today_song'] = today_song.song
+        print('active today song', today_song.song.id)
+        return context
 
 @login_required
 def friend_request(request, receiver_id):

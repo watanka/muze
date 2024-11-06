@@ -9,6 +9,9 @@
 - [ ] User와 UserProfile이 분리되어있기 때문에, 둘 중 하나 생성시 같이 생성될 수 있도록 설정해야함.
 - [ ] Song에다가 message 기능 추가하기
 
+
+
+
 ### 요구사항 정의
 - [ ] 음악은 유저가 직접 업로드하거나 삭제할 수 없다.
 
@@ -60,3 +63,8 @@ auth server -> give token to client
 - 최신별
 - 인기별
 - liked_song, mentioned_song, save_song 기준 추천별
+
+
+
+오늘의 노래는 24시간 유지된다. 24시간 후에는 삭제.
+이 삭제 시점을 어떻게 가져가야할지? 조회 시?

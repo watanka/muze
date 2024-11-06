@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 
 
@@ -8,7 +8,7 @@ class User(AbstractUser):
     # 기본 제공되는 필드(예: username, password 등)는 AbstractUser에서 상속받음
     nickname = models.CharField(max_length=30, unique=True)
     profile_picture_url = models.URLField(blank=True, null=True)
-    today_song = models.ForeignKey('musics.Song', on_delete=models.SET_NULL, null=True, blank=True)  # 오늘의 노래
+    # today_song = models.ForeignKey('musics.TodaySong', on_delete=models.SET_NULL, null=True, blank=True)  # 오늘의 노래
     liked_songs = models.ManyToManyField('musics.Song', related_name='liked_by', blank=True)  # 좋아한 노래
     saved_songs = models.ManyToManyField('musics.Song', related_name='saved_by', blank=True)  # 저장한 노래
     shared_songs = models.ManyToManyField('musics.Song', related_name='shared_by', blank=True)  # 공유한 노래
@@ -17,12 +17,25 @@ class User(AbstractUser):
     def add_friend(self, friend):
         self.friends.add(friend)
     
-    
+        
+
+
 class FriendRequest(models.Model):
     from_user = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
     to_user = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+# class UserMessage(models.Model):
+#     sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sent_messages')
+#     receiver = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='received_messages')
+#     song = models.ForeignKey("musics.Song", on_delete=models.SET_NULL, null=True)
+#     content = models.TextField()
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#     is_read = models.BooleanField(default=False)
+
+#     def __str__(self):
+#         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
 
 
 class UserActivity(models.Model):

@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import timedelta, datetime
 from urllib.parse import unquote
 
 # Create your models here.
@@ -19,20 +20,30 @@ class Song(models.Model):
     title = models.CharField(max_length = 200)
     track_popularity = models.IntegerField(default=0)
     album_cover = models.URLField()
+    album = models.CharField(max_length = 200)
     artist = models.CharField(max_length = 100)
     genre = models.CharField(max_length=20, choices = GENRE_CHOICES, blank=True)
     release_date = models.DateField()
     num_mention = models.IntegerField(default=0)
     num_likes = models.IntegerField(default=0)
 
-    def save(self, *args, **kwargs):
-        if not self.album_cover.startswith('http'):
-            self.album_cover = unquote(self.album_cover)
-        super(Song, self).save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.title} by {self.artist}"
     
+class TodaySong(models.Model):
+    user = models.ForeignKey("users.User", on_delete = models.CASCADE, related_name="today_song_set")
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expired_at = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.created_at:
+            self.created_at = datetime.now()  # 현재 시간 설정
+        if not self.expired_at:
+            self.expired_at = self.created_at + timedelta(hours=24)
+        super().save(*args, **kwargs)
+
+
 class Comment(models.Model):
     song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey("users.User", on_delete = models.CASCADE)

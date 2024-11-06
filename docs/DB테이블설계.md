@@ -13,9 +13,10 @@
 - title: 노래 제목
 - artist: 아티스트 이름
 - genre: 장르
+- album: 앨범
 - num_mentions: 노래 언급 횟수 (사용자에 의해 공유된 횟수)
 - num_likes: 좋아요 수 (좋아요를 받은 횟수)
-- created_at: 노래 등록 날짜 (추가 필드, 선택적)
+- release_date: 노래 등록 날짜 (추가 필드, 선택적)
 - updated_at: 노래 정보 업데이트 날짜 (추가 필드, 선택적)
 
 ## Comment

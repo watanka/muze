@@ -6,7 +6,7 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import Song, Comment
+from .models import Song, TodaySong, Comment
 from .form import CommentForm, SearchForm
 from music_dashboard.tasks import persist
 
@@ -110,117 +110,92 @@ client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
+from .search_api_handler import SpotifyAPIHandler
 
-def parse_spotify_result(data):
-    result = []
-    ## 3개만
-    for track in data['tracks']['items'][:3]:
-        title = track['name']
-        track_popularity = track['popularity']
-        album_info = {
-            "name": track['album']['name'],
-            "release_date": track['album']['release_date'],
-            "image_url": track['album']['images'][0]['url']
-        }
-        artist_names = [artist['name'] for artist in track['artists']]
-        spotify_url = track['external_urls']['spotify']
-        result.append({
-            'title': title,
-            'track_popularity': track_popularity,
-            'album': album_info,
-            'artists': artist_names,
-            'spotify_url': spotify_url
-        })
-    return result
-
-
+api_handler = SpotifyAPIHandler(sp)
 
 
 def search_view(request):
-    ### TODO
+    # 검색한 카테고리의 쿼리가 DB에 없는지 확인
+    # 없을 경우 API 호출
     if request.method == 'GET':
         form = SearchForm(request.GET)
         if form.is_valid():
             category = form.cleaned_data['category']
             keyword = form.cleaned_data['keyword']
 
-            if category == 'track':
-                category = 'title'
+            query_result = Song.objects.filter(**{f'{category}__icontains': keyword})
             
-            query_result = None
-            try:
-                query_result = Song.objects.filter(**{f'{category}__icontains': keyword})
-            except Exception as e:
-                print(f'error log: {e}' )
-            
-            print('query result: ', query_result)
-            print('category: ', category)
-            print('keyword: ', keyword)
-            # if query_result.exists():
-            if len(query_result) > 0:
+            # DB 결과에 있을 경우; DB 결과는 리턴되도 원하는 결과가 아닐 수 있음. 예) 같은 제목 다른 아티스트
+            if query_result.exists():
                 return render(request, 'musics/search_results.html', {'track_results': query_result})
-            else:
-                if category == 'title':
-                    category = 'track'
-                # spotify api로 검색   
-                query = f'{keyword}'
-                data = sp.search(q=query, type=category)
+            
+            result = api_handler.search(keyword, category)
+
+            for res in result:
+                persist.delay(
+                    title = res['title'], 
+                    track_popularity = res['track_popularity'], 
+                    artists = res['artists'], 
+                    album = res['album']['name'], 
+                    release_date = res['album']['release_date'],
+                    album_cover = res['album']['image_url']
+                )
+
     
-                result = parse_spotify_result(data)
-                
-                for res in result:
-                    print('비동기로 음악을 저장합니다')
-                    persist.delay(**res)
-
-                # 결과를 컨텍스트에 추가하여 템플릿 렌더링
-                return render(request, 'musics/search_results.html', {'track_results': result})
-    else:
-        form = SearchForm()
-
+            
+            # 결과를 컨텍스트에 추가하여 템플릿 렌더링
+            return render(request, 'musics/search_results.html', {'track_results': result})
     return render(request, 'musics/search.html', {'form': form})
 
-def request_song(request):
-    if request.method == 'GET':
-        form = SearchForm()
-        # 결과를 컨텍스트에 추가하여 템플릿 렌더링
-        return render(request, 'musics/request_song.html', {'form': form})
+# def request_song(request):
 
-    elif request.method == 'POST':
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            category = form.cleaned_data['category']
-            keyword = form.cleaned_data['keyword']
+#     if request.method == 'GET':
+#         form = SearchForm()
+#         # 결과를 컨텍스트에 추가하여 템플릿 렌더링
+#         return render(request, 'musics/request_song.html', {'form': form})
 
-            if category == 'title':
-                category = 'track'
+#     elif request.method == 'POST':
+#         form = SearchForm(request.POST)
+#         if form.is_valid():
+#             category = form.cleaned_data['category']
+#             keyword = form.cleaned_data['keyword']
 
-            query = f'{keyword}'
-            data = sp.search(q=query, type=category)
-            result = parse_spotify_result(data)
+#             if category == 'title':
+#                 category = 'track'
 
-        # try: 
-        #     song = get_object_or_404(Song, title=data['track_name'], artist=data['artists'] )
-        #     return HttpResponse('곡이 이미 존재합니다.')
-        # except Http404:
-        #     song = Song(
-        #         title = data['track_name'],
-        #         album_cover = data['album_cover'],
-        #         artist = data['artists'],
-        #         release_date = data['release_date'],
-        #     )
+#             query = f'{keyword}'
+#             data = sp.search(q=query, type=category)
+#             result = parse_spotify_result(data)
+
+#         # try: 
+#         #     song = get_object_or_404(Song, title=data['track_name'], artist=data['artists'] )
+#         #     return HttpResponse('곡이 이미 존재합니다.')
+#         # except Http404:
+#         #     song = Song(
+#         #         title = data['track_name'],
+#         #         album_cover = data['album_cover'],
+#         #         artist = data['artists'],
+#         #         release_date = data['release_date'],
+#         #     )
             
-        #     song.save()
-            return render(request, 'musics/search_results.html', {'track_results': result, 'form': form})
-    return redirect(reverse('musics:index'))
+#         #     song.save()
+#             return render(request, 'musics/search_results.html', {'track_results': result, 'form': form})
+#     return redirect(reverse('musics:index'))
 
 
+@login_required
 def add_today_song(request):
-    return redirect(reverse('musics:index'))
+    song_id = request.POST.get('song_id')
+    song = get_object_or_404(Song, pk=song_id)
+    today_song = TodaySong.objects.create(
+        song = song,
+        user = request.user
+    )
+    today_song.save()
+    # request.user.today_song = song
+    # request.user.save()
 
-def plus(request):
-    import random
-    from music_dashboard.tasks import celery_plus
-    num1 = random.randint(0, 10)
-    num2 = random.randint(0, 10)
-    celery_plus.delay(num1,num2)
-    return render(request, 'musics/plus_result.html', {"result": '완료'})
+    song.num_mention += 1
+    song.save()
+    return JsonResponse({'success': True})

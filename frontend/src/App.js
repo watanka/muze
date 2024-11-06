@@ -12,6 +12,14 @@ function Header(props){
       </header>
 }
 
+function Sample(){
+  return (
+    <h2>Sample</h2>
+  )
+}
+
+
+
 function Nav(props){
   const lis = []
   for (let i=0; i<props.topics.length;i++){
