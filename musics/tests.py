@@ -132,15 +132,9 @@ class SongTests(TestCase):
         track_results = response.context['track_results']
         self.assertEqual(track_results[0]['title'], 'Test Track')
 
-    '''
-    새로운 노래를 요청하면, 검증과정을 거쳐 데이터베이스에 추가한다.
-    검증과정: 이미 있는 노래인지 확인
-    '''
 
     def test_request_new_song_fail_if_song_already_exists_in_db(self):
-        '''
-        새로운 노래 요청 시에, 이미 데이터베이스에 있는 곡이면 요청 실패 반환.
-        '''
+       
         data = {
             'track_name': 'Test Track',
             'album_cover': 'test_url',

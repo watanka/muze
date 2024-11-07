@@ -13,22 +13,13 @@
         {% for track in track_results %}
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <img src="{{ track.album.image_url }}" class="card-img-top" alt="Album cover">
+                    <img src="{{ track.album_cover }}" class="card-img-top" alt="Album cover">
                     <div class="card-body">
                         <h5 class="card-title">{{ track.title }}</h5>
-                        <p class="card-text"><strong>Album:</strong> {{ track.album.name }}</p>
-                        <p class="card-text"><strong>Release Date:</strong> {{ track.album.release_date }}</p>
-                        <p class="card-text"><strong>Artists:</strong> {{ track.artists|join:", " }}</p>
+                        <p class="card-text"><strong>Album:</strong> {{ track.album_name }}</p>
+                        <p class="card-text"><strong>Release Date:</strong> {{ track.release_date }}</p>
+                        <p class="card-text"><strong>Artists:</strong> {{ track.artists }}</p>
                         <a href="{{ track.spotify_url }}" target="_blank" class="btn btn-primary mt-2">Listen on Spotify</a>
-                        <!-- <form method="POST" action="{% url 'musics:request_song' %}" class="mt-2">
-                            {% csrf_token %}
-                            <input type="hidden" name="track_name" value="{{ track.title }}">
-                            <input type="hidden" name="album" value="{{ track.album.name }}">
-                            <input type="hidden" name="album_cover" value="{{ track.album.image_url }}">
-                            <input type="hidden" name="artists" value="{{ track.artists|join:', ' }}">
-                            <input type="hidden" name="release_date" value="{{ track.album.release_date }}">
-                            <button type="submit" class="btn btn-success">새로운 트랙 요청</button>
-                        </form> -->
                     </div>
                 </div>
             </div>

@@ -1,17 +1,12 @@
 from celery import shared_task
+from musics.search_api_handler import SearchResult
 from musics.models import Song
 
+from dataclasses import asdict
+
 @shared_task
-def persist(title, track_popularity, artists, album, release_date, album_cover):
-    Song.objects.create(
-        title = title,
-        track_popularity = track_popularity,
-        artist = artists,
-        album = album,
-        album_cover = album_cover,
-        release_date = release_date
-    )
-    print('곡 저장 완료')
+def celery_save_db(data: SearchResult):
+    Song.objects.create(**data)
 
 # from ..music_scraper.scrape import MusicCollector, preprocess_data, persist
 

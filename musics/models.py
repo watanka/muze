@@ -20,12 +20,13 @@ class Song(models.Model):
     title = models.CharField(max_length = 200)
     track_popularity = models.IntegerField(default=0)
     album_cover = models.URLField()
-    album = models.CharField(max_length = 200)
-    artist = models.CharField(max_length = 100)
+    album_name = models.CharField(max_length = 200)
+    artists = models.CharField(max_length = 100)
     genre = models.CharField(max_length=20, choices = GENRE_CHOICES, blank=True)
     release_date = models.DateField()
     num_mention = models.IntegerField(default=0)
     num_likes = models.IntegerField(default=0)
+    spotify_url = models.URLField()
 
     def __str__(self):
         return f"{self.title} by {self.artist}"

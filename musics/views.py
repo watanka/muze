@@ -8,7 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .models import Song, TodaySong, Comment
 from .form import CommentForm, SearchForm
-from music_dashboard.tasks import persist
+from music_dashboard.tasks import celery_save_db
+
+from dataclasses import asdict
 
 import logging
 
@@ -110,9 +112,9 @@ client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-from .search_api_handler import SpotifyAPIHandler
+from .search_api_handler import SpotifyAPIHandler,ShazamAPIHandler
 
-api_handler = SpotifyAPIHandler(sp)
+api_handler = ShazamAPIHandler()
 
 
 def search_view(request):
@@ -124,65 +126,21 @@ def search_view(request):
             category = form.cleaned_data['category']
             keyword = form.cleaned_data['keyword']
 
-            query_result = Song.objects.filter(**{f'{category}__icontains': keyword})
-            
+            db_result = Song.objects.filter(**{f'{category}__icontains': keyword})
             # DB 결과에 있을 경우; DB 결과는 리턴되도 원하는 결과가 아닐 수 있음. 예) 같은 제목 다른 아티스트
-            if query_result.exists():
-                return render(request, 'musics/search_results.html', {'track_results': query_result})
+            if db_result.exists():
+                return render(request, 'musics/search_results.html', {'track_results': db_result})
+            print('search 진행 from view')
+            search_result = api_handler.search(keyword, category)
             
-            result = api_handler.search(keyword, category)
-
-            for res in result:
-                persist.delay(
-                    title = res['title'], 
-                    track_popularity = res['track_popularity'], 
-                    artists = res['artists'], 
-                    album = res['album']['name'], 
-                    release_date = res['album']['release_date'],
-                    album_cover = res['album']['image_url']
-                )
-
-    
+            print('search_result', search_result)
+            for res in search_result:
+                celery_save_db.delay(res)
             
-            # 결과를 컨텍스트에 추가하여 템플릿 렌더링
-            return render(request, 'musics/search_results.html', {'track_results': result})
+            return render(request, 'musics/search_results.html', {'track_results': search_result})
+    else:
+        form = SearchForm()
     return render(request, 'musics/search.html', {'form': form})
-
-# def request_song(request):
-
-#     if request.method == 'GET':
-#         form = SearchForm()
-#         # 결과를 컨텍스트에 추가하여 템플릿 렌더링
-#         return render(request, 'musics/request_song.html', {'form': form})
-
-#     elif request.method == 'POST':
-#         form = SearchForm(request.POST)
-#         if form.is_valid():
-#             category = form.cleaned_data['category']
-#             keyword = form.cleaned_data['keyword']
-
-#             if category == 'title':
-#                 category = 'track'
-
-#             query = f'{keyword}'
-#             data = sp.search(q=query, type=category)
-#             result = parse_spotify_result(data)
-
-#         # try: 
-#         #     song = get_object_or_404(Song, title=data['track_name'], artist=data['artists'] )
-#         #     return HttpResponse('곡이 이미 존재합니다.')
-#         # except Http404:
-#         #     song = Song(
-#         #         title = data['track_name'],
-#         #         album_cover = data['album_cover'],
-#         #         artist = data['artists'],
-#         #         release_date = data['release_date'],
-#         #     )
-            
-#         #     song.save()
-#             return render(request, 'musics/search_results.html', {'track_results': result, 'form': form})
-#     return redirect(reverse('musics:index'))
-
 
 @login_required
 def add_today_song(request):
@@ -193,8 +151,6 @@ def add_today_song(request):
         user = request.user
     )
     today_song.save()
-    # request.user.today_song = song
-    # request.user.save()
 
     song.num_mention += 1
     song.save()

@@ -340,7 +340,7 @@ DEFAULT_LOGGING = {
 }
 
 
-CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
+CELERY_BROKER_URL = 'pyamqp://user:password@localhost//'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'

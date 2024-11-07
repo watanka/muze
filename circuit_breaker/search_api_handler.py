@@ -129,18 +129,26 @@ class ShazamAPIHandler(SearchAPIHandler):
         }
 
     def search(self, query: str, category: str):
-        print('search 진행 from api_handler')
         query = query.replace(' ', '-')
-        self.conn.request("GET", f"/search?term={query}&offset=0&limit=5", headers=self.headers)
-        response = self.conn.getresponse()
-        api_result = json.loads(response.read().decode("utf-8"))
         if category == 'title':
+            # 트랙 검색
+            self.conn.request("GET", f"/search?term={query}&offset=0&limit=5", headers=self.headers)
+            response = self.conn.getresponse()
+            api_result = json.loads(response.read().decode("utf-8"))
             return self.parse_track_result(api_result)
         elif category == 'artist':
+            # 아티스트 검색
+            self.conn.request("GET", f"/search?term={query}&offset=0&limit=5", headers=self.headers)
+            try:
+                response = self.conn.getresponse()
+            except Exception as e:
+                print('error', e)
+            # print('response', response)
+            api_result = json.loads(response.read().decode("utf-8"))
+            print('api_result', api_result)
+            print('--------------------------------')
             return self.parse_artist_result(api_result)
-        else:
-            print(category)
-
+    
     def parse_track_result(self, data):
         result = []
         # Shazam API 응답에서 tracks 부분 파싱
@@ -191,3 +199,7 @@ class ShazamAPIHandler(SearchAPIHandler):
             )
         
         return result
+
+if __name__ == '__main__':
+    api_handler = ShazamAPIHandler()
+    print(api_handler.search('iu', 'artist'))
