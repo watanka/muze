@@ -1,7 +1,6 @@
 <div class="comments-section">
     <!-- 댓글 작성 폼 -->
     <div class="comment-form-container">
-        <h3>댓글 작성</h3>
         <form method="POST" action="{% url 'musics:comments' song.id %}" class="comment-form">
             {% csrf_token %}
             <div class="comment-input-wrapper">

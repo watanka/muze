@@ -1,3 +1,5 @@
+{% load static %}
+
 <!-- base.html -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -5,43 +7,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}제목{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    {% if user.is_authenticated %}
-        <div class="inbox-icon">
-            <a href="{% url 'user_messages:inbox' %}">
-                <i class="fas fa-inbox"></i>
-                
-                <span id="unread-messages-badge" class="badge" style="display: none;">{{ unread_messages_count }}</span>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="로고" class="nav-logo">
             </a>
         </div>
-            <script>
-                    document.addEventListener("DOMContentLoaded", function(){
-                        function updateUnreadMessages(){
-                            fetch("{% url 'user_messages:unread_messages_count' %}")
-                            .then(response => response.json())
-                            .then(data => {
-                                const badge = document.getElementById("unread-messages-badge");
-                                    badge.textContent = data.unread_messages_count;
-                                    badge.style.display = "inline-block";
-                            })
-                            .catch(error => console.error("Error fetching unread messages"))
-                        }
-
-                        setInterval(updateUnreadMessages, 10000);
-
-                        updateUnreadMessages();
-            });
-            </script>
-    {% endif %}
+    
+        <div class="nav-menu">
+            {% if user.is_authenticated %}
+                <div class="nav-item">
+                    <a href="{% url 'user_messages:inbox' %}" class="nav-link message-link">
+                        <i class="fas fa-inbox"></i>
+                        <span id="unread-messages-badge" class="badge" style="display: none;">
+                            {{ unread_messages_count }}
+                        </span>
+                    </a>
+                </div>
+                
+                <div class="nav-item dropdown">
+                    <button class="nav-link profile-button">
+                        <img src="{{ user.profile_picture_url|default:'/static/images/default-user-profile.png' }}" 
+                             alt="프로필" 
+                             class="profile-image">
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="{% url 'users:profile' user.id %}" class="dropdown-item">
+                            <i class="fas fa-user"></i> 프로필
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'account_logout' %}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> 로그아웃
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="nav-item">
+                    <a href="{% url 'account_login' %}" class="nav-link login-button">
+                        로그인
+                    </a>
+                </div>
+            {% endif %}
         </div>
-    <!-- 헤더 포함 -->
+    </nav>
+    
     {% block content %}
         {% include 'login.html' %}
-        <h2>Popular Songs</h2>
-        {% include 'musics/index.html' with song_list=popular_song_list %}
-        <!-- <h2>New Released Songs</h2>
-        {% include 'musics/index.html' with song_list=new_release_song_list %} -->
     {% endblock %}
+    
+    {% if user.is_authenticated %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function(){
+        // 메시지 카운트 업데이트
+        function updateUnreadMessages(){
+            fetch("{% url 'user_messages:unread_messages_count' %}")
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById("unread-messages-badge");
+                if (data.unread_messages_count > 0) {
+                    badge.textContent = data.unread_messages_count;
+                    badge.style.display = "inline-block";
+                } else {
+                    badge.style.display = "none";
+                }
+            })
+            .catch(error => console.error("Error fetching unread messages"));
+        }
+    
+        // 드롭다운 메뉴 토글
+        const profileButton = document.querySelector('.profile-button');
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+    
+        profileButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+    
+        document.addEventListener('click', function(e) {
+            if (!dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    
+        setInterval(updateUnreadMessages, 10000);
+        updateUnreadMessages();
+    });
+    </script>
+    {% endif %}
+    {% include 'musics/index.html' with song_list=popular_song_list %}
+
 </body>
 </html>

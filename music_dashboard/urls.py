@@ -37,7 +37,7 @@ class HomeView(TemplateView):
         return context
 
 urlpatterns = [
-    path('', HomeView.as_view()),
+    path('', HomeView.as_view(), name='home'),
     path('messages/', include("user_messages.urls")),
     path('users/', include("users.urls")),
     path('musics/', include("musics.urls")),
