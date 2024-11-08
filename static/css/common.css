@@ -1,0 +1,20 @@
+:root {
+    --bg-primary: #F0F7FF;     /* 매우 연한 블루 */
+    --bg-secondary: #FFFFFF;   /* 흰색 */
+    --bg-accent: #E8F3FF;     /* 연한 블루 포인트 */
+    --accent: #7C3AED;        /* 보라색 포인트 */
+    --text-primary: #2D3748;  /* 진한 텍스트 */
+    --text-secondary: #718096; /* 보조 텍스트 */
+}
+
+/* 공통으로 적용될 기본 스타일 */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.card {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+}

@@ -1,0 +1,21 @@
+:root {
+    /* 네온 무드 테마 */
+    --bg-primary: #0F172A;     /* 매우 진한 네이비 */
+    --bg-secondary: #1E293B;   /* 진한 네이비 */
+    --accent-primary: #FF0080; /* 네온 핑크 */
+    --accent-secondary: #7928CA; /* 네온 퍼플 */
+    --text-primary: #F8FAFC;   /* 밝은 텍스트 */
+    --text-secondary: #94A3B8; /* 보조 텍스트 */
+}
+
+/* 공통으로 적용될 기본 스타일 */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.card {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+}

@@ -6,28 +6,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ song.title }} - 상세 정보</title>
+    <title>{{ song.title }}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- CSS 파일 링크 -->
 </head>
 <body>
-    <div class="container">
-        <h1>{{ song.title }}</h1>
-        <img src="{{ song.album_cover }}" alt="{{ song.title }} 앨범 커버" style="width:200px;height:auto;">
-        <p>아티스트: {{ song.artist }}</p>
-        <p>장르: {{ song.genre }}</p>
-        <p>발매일: {{ song.release_date }}</p>
-        <p>liked: {{ song.num_likes }}</p>
-        <p>mentioned: {{ song.num_mention }}</p>
-        <a href="{% url 'user_messages:send_message' song.id %}" method="post">친구에게 추천하기</a>
-        <a href="{% url 'musics:like' song.id %}" method="post">좋아요!</a>
-        <form action="{% url 'musics:add_today_song'%}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="song_id" value="{{ song.id }}">
-            <button type="submit">오늘의 노래 추가하기</button>    
-        </form>
-
-        <!-- 댓글 작성 폼 -->
-        {% include 'musics/comments.html' %}
+    
+    <div class="detail-card">
+        {% include "musics/song.html" with song=song %}
+        <div class="action-overlay">
+            <div class="action-buttons">
+                <a href="{% url 'user_messages:send_message' song.id %}" class="action-button" data-action="send-message">
+                    <img src="{% static 'musics/icons/share.png' %}" alt="공유" class="action-icon">
+                    <span class="action-count">{{ song.num_mention }}</span>
+                </a>
+                
+                <div class="action-divider"></div>
+                
+                <a href="{% url 'musics:like' song.id %}" 
+                   class="action-button {% if user in song.likes.all %}liked{% endif %}" 
+                   data-action="like">
+                    <img src="{% static 'musics/icons/like.svg' %}" alt="좋아요" class="action-icon">
+                    <span class="action-count">{{ song.num_likes }}</span>
+                </a>
+                
+                <div class="action-divider"></div>
+                
+                {% if user.is_authenticated and not is_today_song %}
+                    <a href="#" class="action-button" data-action="today-song" id="add-today-song">
+                        <img src="{% static 'musics/icons/today-song.jpg' %}" alt="오늘의 노래" class="action-icon">
+                    </a>
+                {% endif %}
+            </div>
+        </div>
     </div>
+    {% include 'musics/comments.html' %}
 </body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    $(document).ready(function() {
+        $('#add-today-song').click(function(event) {
+            event.preventDefault();  // 기본 링크 동작 방지
+
+            $.ajax({
+                url: "{% url 'musics:add_today_song' song.id %}",
+                type: "POST",  // 또는 "POST"로 변경 가능
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert("오늘의 노래로 추가되었습니다!");
+                    } else {
+                        alert("오류가 발생했습니다. 다시 시도해주세요.");
+                    }
+                },
+                error: function() {
+                    alert("서버 오류가 발생했습니다. 다시 시도해주세요.");
+                }
+            });
+        });
+    });
+</script>
+
 </html>

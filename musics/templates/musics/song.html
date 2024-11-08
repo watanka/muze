@@ -1,0 +1,15 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'musics/styles.css' %}">
+
+<div class="card">
+    <a href="{% url 'musics:detail' song.id %}">
+        <img  src="{{ song.album_cover }}" alt="{{ song.title }} 앨범 커버" class="card-image">
+    </a>
+    <div class="card-content"> 
+            <h2><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a></h2>
+            <p>아티스트: {{ song.artist }}</p>
+            <p>출시 날짜: {{ song.release_date|date:"Y년 n월 j일" }}</p>
+            <p>likes: {{ song.num_likes }}</p>
+            <p>mentioned: {{ song.num_mention }}</p>
+    </div>
+</div>

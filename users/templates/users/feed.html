@@ -9,7 +9,7 @@
     <h1>Feed</h1>
     <ul>
         {% for activity in feeds %}
-            <li>{{ activity.user.username }}의 활동: {{ activity.activity_type }} - {{ activity.created_at }}</li>
+            {% include 'users/activity.html' with activity=activity %}
         {% empty %}
             <li>활동이 없습니다.</li>
         {% endfor %}

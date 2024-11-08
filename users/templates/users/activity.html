@@ -1,0 +1,13 @@
+
+<li>{{ activity.user.nickname }}의 활동: {{ activity.activity_type }} - {{ activity.created_at }}</li>
+{% if activity.activity_type == 'like' %}
+    <p>{{ activity.song.title }}을(를) 좋아했습니다.</p>
+{% elif activity.activity_type == 'save' %}
+    <p>{{ activity.song.title }}을(를) 저장했습니다.</p>
+{% elif activity.activity_type == 'share' %}
+    <p>{{ activity.song.title }}을(를) {{ activity.song.title }}을(를) {{ activity.friend_user.nickname }}에게 공유했습니다.</p>
+{% elif activity.activity_type == 'set_today_song' %}
+    <p>{{activity.user.nickname}}님이 {{ activity.song.title }}을(를) 오늘의 노래로 설정했습니다.</p>
+{% endif %}
+<img src="{{ activity.song.album_cover }}" alt="{{ activity.song.title }}">
+

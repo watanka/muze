@@ -16,7 +16,7 @@ import graypy
 
 
 DEBUG=True
-ALLOWED_HOSTS=['127.0.0.1']
+ALLOWED_HOSTS=['127.0.0.1', 'localhost', '0.0.0.0']
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -195,7 +195,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = 'users.User'
 
 INTERNAL_IPS = [
-    "127.0.0.1"
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0",
 ]
 
 # oauth setting

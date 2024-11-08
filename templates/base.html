@@ -1,0 +1,13 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- 공통 CSS를 먼저 로드 -->
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <!-- 각 앱별 CSS는 그 다음에 로드 -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+</body>
+</html> 

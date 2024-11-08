@@ -27,6 +27,7 @@ django-celery-beat = "^2.7.0"
 django-celery-results = "^2.5.1"
 graypy = "^2.1.0"
 apple-music-python = "^1.0.5"
+locust = "^2.32.1"
 
 [build-system]
 requires = ["poetry-core"]

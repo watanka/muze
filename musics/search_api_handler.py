@@ -1,5 +1,7 @@
 import http.client
 import json
+from urllib.parse import quote
+
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -27,13 +29,19 @@ class SpotifyAPIHandler(SearchAPIHandler):
     def __init__(self, api_client):
         self.api_client = api_client
 
+    def __repr__(self):
+        return 'Spotify API Handler'
+
     def search(self, query: str, category: str):
         
         # category는 title 또는 artist
         if category == 'title':
             category = 'track'
-        
-        api_result = self.api_client.search(q=f'{category}:{query}', type=category)
+        if category == 'artists':
+            category = 'artist'
+
+        encoded_query = quote(query)
+        api_result = self.api_client.search(q=f'{category}:{encoded_query}', type=category)
         # result 구조가 category에 따라 다름
         
         if category == 'track':
@@ -128,18 +136,24 @@ class ShazamAPIHandler(SearchAPIHandler):
             'x-rapidapi-host': "shazam.p.rapidapi.com"
         }
 
+    def __repr__(self):
+        return 'Shazam API Handler'
+
     def search(self, query: str, category: str):
-        print('search 진행 from api_handler')
+        encoded_query = quote(query)
         query = query.replace(' ', '-')
-        self.conn.request("GET", f"/search?term={query}&offset=0&limit=5", headers=self.headers)
-        response = self.conn.getresponse()
-        api_result = json.loads(response.read().decode("utf-8"))
+        try:
+            self.conn.request("GET", f"/search?term={encoded_query}&offset=0&limit=5", headers=self.headers)
+            response = self.conn.getresponse()
+            api_result = json.loads(response.read().decode("utf-8"))
+        finally:
+            self.conn.close()
         if category == 'title':
             return self.parse_track_result(api_result)
-        elif category == 'artist':
+        elif category == 'artists':
             return self.parse_artist_result(api_result)
-        else:
-            print(category)
+
+        
 
     def parse_track_result(self, data):
         result = []
@@ -153,15 +167,13 @@ class ShazamAPIHandler(SearchAPIHandler):
             images = track.get('images', {})
             album_cover = images.get('coverarthq', '')
             
-            # 발매일 정보는 Shazam API에서 제공하지 않을 수 있음
-            release_date = track.get('releasedate', '')
             
             result.append(
                 dict(
                     title=track.get('title', ''),
                     track_popularity=50,  # Shazam은 인기도를 제공하지 않아 기본값 설정
                     album_name=track.get('subtitle', ''),  # 또는 앨범 정보가 있다면 그것을 사용
-                    release_date=release_date,
+                    release_date=track.get('releasedate', datetime.now().strftime('%Y-%m-%d')),
                     artists=track.get('subtitle', ''),  # artist 정보
                     spotify_url=track.get('url', ''),  # Shazam URL
                     album_cover=album_cover
@@ -177,13 +189,14 @@ class ShazamAPIHandler(SearchAPIHandler):
         for track_hit in tracks:
             track = track_hit.get('track', {})
             
+            release_date = track.get('releasedate', datetime.now().strftime('%Y-%m-%d'))
             # 필요한 정보만 추출
             result.append(
                 dict(
                     title=track.get('title', ''),
                     track_popularity=50,  # Shazam은 인기도를 제공하지 않아 기본값 설정
                     album_name=track.get('subtitle', ''),  # artist 정보가 subtitle에 있음
-                    release_date='',  # Shazam API는 발매일 정보 제공하지 않음
+                    release_date=track.get('releasedate', datetime.now().strftime('%Y-%m-%d')),  # Shazam API는 발매일 정보 제공하지 않음
                     artists=track.get('subtitle', ''),  # artist 정보
                     spotify_url=track.get('url', ''),  # Shazam URL
                     album_cover=track.get('images', {}).get('coverarthq', '')

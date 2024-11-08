@@ -1,4 +1,3 @@
-from typing import Any
 from django.http import HttpResponse, Http404, JsonResponse
 from django.urls import reverse
 from django.db.models import Count
@@ -10,8 +9,9 @@ from .models import Song, TodaySong, Comment
 from .form import CommentForm, SearchForm
 from music_dashboard.tasks import celery_save_db
 
+from typing import Any
+from datetime import timedelta
 from dataclasses import asdict
-
 import logging
 
 logger = logging.getLogger('django')
@@ -21,6 +21,11 @@ class SongListView(ListView):
     template_name = "musics/index.html"
     context_object_name = "song_list"
     paginate_by=20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = SearchForm(self.request.GET or None)
+        return context
 
     def get_queryset(self):
         queryset = Song.objects.all()  # 기본 쿼리셋
@@ -43,7 +48,7 @@ class SongListView(ListView):
     
     def render_to_response(self, context: dict[str, Any], **response_kwargs: Any) -> HttpResponse:
         if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            songs_html = self.render_to_string('musics/_song_list.html', {'song_list': context['song_list']})
+            songs_html = self.render_to_string('musics/song_list.html', {'song_list': context['song_list']})
             return JsonResponse({'html': songs_html})
         
         return super().render_to_response(context, **response_kwargs)
@@ -57,6 +62,11 @@ class SongDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         logger.info(f'User: {self.request.user} Song {self.object.title} detail 조회')
         context['comments'] = self.object.comments.all()
+        if self.request.user.is_authenticated:
+            latest_today_song = TodaySong.objects.filter(user=self.request.user).order_by('-created_at').first()
+            context['is_today_song'] = (latest_today_song is not None and latest_today_song.song == self.object)
+        else:
+            context['is_today_song'] = False
         return context
 
 @method_decorator(login_required, name='dispatch')  # 모든 메서드에 대해 로그인 요구
@@ -102,20 +112,7 @@ def likes(request, song_id):
 
     return redirect(reverse('musics:detail', args=(song_id,)))
 
-import os
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-
-client_id = os.getenv('SPOTIFY_CLIENT_ID')
-client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
-
-client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
-from .search_api_handler import SpotifyAPIHandler,ShazamAPIHandler
-
-api_handler = ShazamAPIHandler()
-
+from .circuit_breaker import circuit_breaker
 
 def search_view(request):
     # 검색한 카테고리의 쿼리가 DB에 없는지 확인
@@ -130,12 +127,13 @@ def search_view(request):
             # DB 결과에 있을 경우; DB 결과는 리턴되도 원하는 결과가 아닐 수 있음. 예) 같은 제목 다른 아티스트
             if db_result.exists():
                 return render(request, 'musics/search_results.html', {'track_results': db_result})
-            print('search 진행 from view')
-            search_result = api_handler.search(keyword, category)
             
-            print('search_result', search_result)
-            for res in search_result:
-                celery_save_db.delay(res)
+            search_result = circuit_breaker.execute(keyword, category)
+            
+            
+            
+            # for res in search_result:
+            #     celery_save_db.delay(res)
             
             return render(request, 'musics/search_results.html', {'track_results': search_result})
     else:
@@ -143,8 +141,7 @@ def search_view(request):
     return render(request, 'musics/search.html', {'form': form})
 
 @login_required
-def add_today_song(request):
-    song_id = request.POST.get('song_id')
+def add_today_song(request, song_id):
     song = get_object_or_404(Song, pk=song_id)
     today_song = TodaySong.objects.create(
         song = song,

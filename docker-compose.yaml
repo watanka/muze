@@ -88,6 +88,31 @@ services:
       - mongo
       - elasticsearch
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # RabbitMQ 관리 콘솔
+    networks:
+      - app_network
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A music_dashboard worker --loglevel=info
+    depends_on:
+      - django
+      - rabbitmq
+    volumes:
+      - .:/app
+    networks:
+      - app_network
+
 volumes:
   db_data:
   mongo_data:

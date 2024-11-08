@@ -1,21 +1,42 @@
-<h2>댓글</h2>
-{% if comments %}
-    <ul>
-        {% for comment in comments %}
-            <li>
-                <strong>{{ comment.user.email}}</strong>: {{ comment.content }} <small>{{ comment.created_at }}</small>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>댓글이 없습니다.</p>
-{% endif %}
+<div class="comments-section">
+    <!-- 댓글 작성 폼 -->
+    <div class="comment-form-container">
+        <h3>댓글 작성</h3>
+        <form method="POST" action="{% url 'musics:comments' song.id %}" class="comment-form">
+            {% csrf_token %}
+            <div class="comment-input-wrapper">
+                <textarea 
+                    name="content" 
+                    class="comment-input" 
+                    placeholder="댓글을 입력하세요..."
+                    rows="3"
+                ></textarea>
+                <button type="submit" class="comment-submit-btn">
+                    댓글 작성
+                </button>
+            </div>
+        </form>
+    </div>
 
-<!-- 댓글 작성 폼 -->
-<h3>댓글 작성</h3>
-<form method="POST" action="{% url 'musics:comments' song.id %}">
-    {% csrf_token %}
-    <textarea name="content" rows="4" cols="50" placeholder="댓글을 입력하세요..."></textarea>
-    <br>
-    <button type="submit">댓글 추가</button>
-</form>
+    <!-- 댓글 목록 -->
+    <div class="comments-container">
+        <h3>댓글 {{ comments|length }}</h3>
+        {% if comments %}
+            <div class="comments-list">
+                {% for comment in comments %}
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">{{ comment.user.email }}</span>
+                            <span class="comment-date">{{ comment.created_at|date:"Y.m.d H:i" }}</span>
+                        </div>
+                        <div class="comment-content">
+                            {{ comment.content }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-comments">첫 댓글을 작성해보세요!</p>
+        {% endif %}
+    </div>
+</div>

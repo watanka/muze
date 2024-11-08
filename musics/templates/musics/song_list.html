@@ -1,0 +1,5 @@
+{% for song in song_list %}
+  <div class="card">
+      {% include "musics/song.html" with song=song %}
+  </div>
+{% endfor %}
