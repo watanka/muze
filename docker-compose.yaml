@@ -22,8 +22,11 @@ services:
   redis:
     image: redis:6.2
     restart: always
+    ports:
+      - "6379:6379"
     networks:
       - app_network
+
 
   django:
     build:
@@ -36,7 +39,6 @@ services:
     depends_on:
       - db
       - redis
-      # - migrations
 
     command: >
       bash -c "

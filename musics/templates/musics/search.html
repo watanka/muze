@@ -4,9 +4,6 @@
     <form method = 'get' action="{% url 'musics:search' %}" class="search-form">
         {% csrf_token %}
         <div class="search-box">    
-            <div class="search-category">
-                {{ form.category }}
-            </div>
             <div class="search-keyword">
                 {{ form.keyword }}
             </div>

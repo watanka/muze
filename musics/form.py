@@ -8,19 +8,19 @@ class CommentForm(forms.ModelForm):
         fields = ['content']
 
 class SearchForm(forms.Form):
-    CATEGORY_CHOICES = [
-        ('artists', '가수'),
-        ('title', '곡 이름')
-    ] # track만 동작. 나머지 category는 구현X
+    # CATEGORY_CHOICES = [
+    #     ('artists', '가수'),
+    #     ('title', '곡 이름')
+    # ] # track만 동작. 나머지 category는 구현X
 
-    category = forms.ChoiceField(
-        choices=CATEGORY_CHOICES,
-        widget = forms.Select(attrs={
-            'class': forms.RadioSelect,
-            'style': 'max-height: 200px; overflow-y: auto;'
-        }),
-        label = '카테고리 선택'
-    )
+    # category = forms.ChoiceField(
+    #     choices=CATEGORY_CHOICES,
+    #     widget = forms.Select(attrs={
+    #         'class': forms.RadioSelect,
+    #         'style': 'max-height: 200px; overflow-y: auto;'
+    #     }),
+    #     label = '카테고리 선택'
+    # )
     keyword = forms.CharField(widget = forms.TextInput(
         attrs = {
             'class': 'form-control', 
