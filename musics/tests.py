@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.utils import timezone
 from datetime import timedelta
 from django.urls import reverse
@@ -7,6 +7,9 @@ from django.http import HttpResponse
 from musics.models import Song
 from django.contrib.auth import get_user_model
 from unittest.mock import patch
+import aiohttp
+import asyncio
+from collections import Counter
 
 User = get_user_model()
 
@@ -28,6 +31,7 @@ def leave_comment(client, song, comment_text):
 NOW = timezone.now().date()
 YESTEREDAY = timezone.now().date() - timedelta(days = 1)
 DAY_BEFORE_YESTERDAY = timezone.now().date() - timedelta(days = 2)
+
 
 
 # Create your tests here.
@@ -148,4 +152,31 @@ class SongTests(TestCase):
         
         self.assertIsInstance(response, HttpResponse)
         self.assertEqual(response.content.decode(), '곡이 이미 존재합니다.')
+        
+
+class ConcurrentSearchTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.url = reverse('musics:search')
+
+    async def make_request(self, session):
+        '''단일 요청을 보내는 비동기 함수'''
+        async with session.get(f"http://localhost:8000/{self.url}") as response:
+            return await response.json()['api_name']
+        
+    async def concurrent_requests(self, n_requests):
+        async with aiohttp.ClientSession() as session:
+            tasks = []
+            for _ in range(n_requests):
+                tasks.append(self.make_request(session))
+            return await asyncio.gather(*tasks)
+        
+    def test_concurrent_requests(self):
+        n_requests = 100
+        api_names = asyncio.run(self.concurrent_requests(n_requests))
+        api_counter = Counter(api_names)
+        
+        self.assertGreater(api_counter['Spotify API Handler'], api_counter['Youtube API Handler'])
+        self.assertGreater(api_counter['Youtube API Handler'], api_counter['Shazam API Handler'])
         

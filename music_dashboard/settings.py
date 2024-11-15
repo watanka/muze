@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     "user_messages.apps.UserMessagesConfig",
     "users.apps.UsersConfig",
     "musics.apps.MusicsConfig",
-    "polls.apps.PollsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
