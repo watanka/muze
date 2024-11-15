@@ -29,6 +29,9 @@ class SearchUser(HttpUser):
         self.csrf_token = 'arlWR9u85C4FYguE5Bf6HtFheQ0C6JfPF4N7ouB1SdJeTHhIajGERzFmywI0GZe6'
         # 응답 시간 통계를 위한 변수
         self.response_times = []
+        self.api_count = {'Spotify API Handler': 0, 
+                          'Shazam API Handler': 0, 
+                          'Youtube API Handler': 0}
 
     @task
     def search_specific_artist(self):
@@ -47,9 +50,13 @@ class SearchUser(HttpUser):
             catch_response=True
         ) as response:
             duration = time.time() - start_time
+            response.body
             if response.status_code == 200:
                 logger.info(f"Successful search for {search_data['keyword']} ({duration:.2f}s)")
                 response.success()
+
+                api_name = response.json()['api_name']
+                self.api_count[api_name] += 1
                 self.response_times.append(duration)
             else:
                 error_msg = f"Search failed for {search_data['keyword']}: {response.status_code}"
@@ -76,4 +83,5 @@ def on_test_stop(environment, **kwargs):
         - Average Response Time: {stats.total.avg_response_time:.2f}ms
         - Median Response Time: {stats.total.median_response_time}ms
         - 95th Percentile: {stats.total.get_response_time_percentile(0.95)}ms
+        - API Count: {stats.api_count}
         """)

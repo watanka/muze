@@ -22,8 +22,8 @@ class SongManager(models.Manager):
         
         return self.get_queryset().order_by(method)
 
-    def search(self, keyword, category):
-        return self.filter(**{f'{category}__icontains': keyword})
+    def search(self, keyword):
+        return self.filter(**{f'title__icontains': keyword}) #+ self.filter(**{f'artists__icontains': keyword})
     
 
 # Create your models here.

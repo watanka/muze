@@ -109,18 +109,19 @@ def search_view(request):
     if request.method == 'GET':
         form = SearchForm(request.GET)
         if form.is_valid():
-            category = form.cleaned_data['category']
             keyword = form.cleaned_data['keyword']
 
-            db_result = Song.objects.search(keyword, category)
+            db_result = Song.objects.search(keyword)
             # DB 결과에 있을 경우; DB 결과는 리턴되도 원하는 결과가 아닐 수 있음. 예) 같은 제목 다른 아티스트
             if db_result.exists():
                 return render(request, 'musics/search_results.html', {'track_results': db_result})
             
-            search_result = api_manager.distribute_requests(keyword, category)
-            
+            search_result = api_manager.distribute_requests(keyword)
+            print('search_result', search_result)
             
             for res in search_result:
+                if 'api_name' in res:
+                    res.pop('api_name')
                 celery_save_song.delay(res)
             
             return render(request, 'musics/search_results.html', {'track_results': search_result})

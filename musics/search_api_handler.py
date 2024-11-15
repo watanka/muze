@@ -5,7 +5,7 @@ from urllib.parse import quote
 
 from dataclasses import dataclass
 from datetime import datetime
-
+import abc
 
 @dataclass
 class SearchResult:
@@ -19,9 +19,12 @@ class SearchResult:
 
 
 # Song title, 
-
 class SearchAPIHandler:
-    pass
+    @abc.abstractmethod
+    def search(self, query: str):
+        pass
+
+
 
 
 class SpotifyAPIHandler(SearchAPIHandler):
@@ -32,23 +35,17 @@ class SpotifyAPIHandler(SearchAPIHandler):
     def __repr__(self):
         return 'Spotify API Handler'
 
-    def search(self, query: str, category: str):
+    def search(self, query: str):
         
         # category는 title 또는 artist
-        if category == 'title':
-            category = 'track'
-        if category == 'artists':
-            category = 'artist'
 
         encoded_query = quote(query)
-        api_result = self.api_client.search(q=f'{category}:{encoded_query}', type=category)
+        api_result = self.api_client.search(q=f'track:{encoded_query}')
+        print('api_result', api_result)
         # result 구조가 category에 따라 다름
         
-        if category == 'track':
-            parsed_result = self.parse_track_result(api_result)
-        elif category == 'artist':
-            parsed_result = self.parse_artist_result(api_result)
-
+        parsed_result = self.parse_track_result(api_result)
+        
         '''
           parsed_result 구조는
           title
@@ -82,22 +79,25 @@ class SpotifyAPIHandler(SearchAPIHandler):
                     release_date=album_info['release_date'],
                     artists=artist_names,
                     spotify_url=spotify_url,
-                    album_cover=album_info['image_url']
+                    album_cover=album_info['image_url'],
+                    api_name=self.__repr__()
                             )
                         )
         return result
     
         
-    def parse_artist_result(self, data):
+    # def parse_artist_result(self, data):
         # 아티스트 검색
         if not data['artists']['items']:
             return []
 
         artist_id = data['artists']['items'][0]['id']
-        
+        print("Selected artist ID:", artist_id)  # 디버깅용
+
 
         # 아티스트의 앨범들 가져오기
         albums = self.api_client.artist_albums(artist_id, album_type='album')
+        print("Albums:", albums)  # 디버깅용
         all_tracks = []
 
         for album in albums['items']:
@@ -110,6 +110,7 @@ class SpotifyAPIHandler(SearchAPIHandler):
 
             # 앨범의 트랙 가져오기
             tracks = self.api_client.album_tracks(album_id)
+            print("Tracks:", tracks)  # 디버깅용
             for track in tracks['items']:
                 title = track['name']
                 track_id = track['id']
@@ -127,7 +128,6 @@ class SpotifyAPIHandler(SearchAPIHandler):
                             ))
         return all_tracks
 
-
 class ShazamAPIHandler(SearchAPIHandler):
     def __init__(self):
         self.conn = http.client.HTTPSConnection("shazam.p.rapidapi.com")
@@ -139,24 +139,16 @@ class ShazamAPIHandler(SearchAPIHandler):
     def __repr__(self):
         return 'Shazam API Handler'
 
-    def search(self, query: str, category: str):
+    def search(self, query: str):
         encoded_query = quote(query)
         query = query.replace(' ', '-')
         try:
             self.conn.request("GET", f"/search?term={encoded_query}&offset=0&limit=5", headers=self.headers)
             response = self.conn.getresponse()
             api_result = json.loads(response.read().decode("utf-8"))
-            print("Response Headers:")
-            for header, value in response.getheaders():
-                print(f"{header}: {value}")
             return api_result
         finally:
             self.conn.close()
-        if category == 'title':
-            return self.parse_track_result(api_result)
-        elif category == 'artists':
-            return self.parse_artist_result(api_result)
-
         
 
     def parse_track_result(self, data):
@@ -185,7 +177,7 @@ class ShazamAPIHandler(SearchAPIHandler):
             )
         return result
     
-    def parse_artist_result(self, data):
+    # def parse_artist_result(self, data):
         result = []
         # Shazam API 응답에서 tracks 부분 파싱
         tracks = data.get('tracks', {}).get('hits', [])[:3]  # 상위 3개만
@@ -219,12 +211,11 @@ class YoutubeAPIHandler(SearchAPIHandler):
     def __repr__(self):
         return 'Youtube API Handler'
 
-    def search(self, query: str, category: str):
+    def search(self, query: str):
         encoded_query = quote(query)
-        if category == 'title':
-            search_type = 'songs'
-        elif category == 'artists':
-            search_type = 'artists'
+        search_type = 'songs'
+        # elif category == 'artists':
+        #     search_type = 'artists'
         
         path = (f"/youtube/v3/search?"
                f"part=snippet"
@@ -307,5 +298,4 @@ if __name__ == '__main__':
     import requests
 
     youtube_api_handler = YoutubeAPIHandler()
-    print(youtube_api_handler.search("power", 'title'))
-
+    # print(youtube_api_handler.search("power", 'title'))

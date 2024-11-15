@@ -81,14 +81,14 @@ class ApiManager:
                 return api_name
         return None  
 
-    def distribute_requests(self, query, category):
+    def distribute_requests(self, query):
         while True:
             # 남은 토큰이 가장 많은 API를 선택하여 호출
             api_name = self.get_most_available_api()
             if api_name:
 
                 print(f"API '{api_name}' 호출 성공")
-                return self.api_buckets[api_name].api.search(query, category)
+                return self.api_buckets[api_name].api.search(query)
             else:
                 print("모든 API가 rate limit에 도달했습니다. 대기 중...")
                 
