@@ -146,6 +146,10 @@ class ShazamAPIHandler(SearchAPIHandler):
             self.conn.request("GET", f"/search?term={encoded_query}&offset=0&limit=5", headers=self.headers)
             response = self.conn.getresponse()
             api_result = json.loads(response.read().decode("utf-8"))
+            print("Response Headers:")
+            for header, value in response.getheaders():
+                print(f"{header}: {value}")
+            return api_result
         finally:
             self.conn.close()
         if category == 'title':
@@ -204,3 +208,104 @@ class ShazamAPIHandler(SearchAPIHandler):
             )
         
         return result
+    
+class YoutubeAPIHandler(SearchAPIHandler):
+    def __init__(self):
+        self.base_url = "www.googleapis.com"
+        self.conn = http.client.HTTPSConnection(self.base_url)
+        self.api_key = 'AIzaSyBNn4y2SlO9Blp3Lt_I5GLS1MPKJ-xtf5A'
+        
+
+    def __repr__(self):
+        return 'Youtube API Handler'
+
+    def search(self, query: str, category: str):
+        encoded_query = quote(query)
+        if category == 'title':
+            search_type = 'songs'
+        elif category == 'artists':
+            search_type = 'artists'
+        
+        path = (f"/youtube/v3/search?"
+               f"part=snippet"
+               f"&q={encoded_query}"
+               f"&type={search_type}"
+               f"&maxResults=20"
+               f"&key={self.api_key}")
+
+        try:
+            self.conn.request("GET", path)
+            response = self.conn.getresponse()
+
+            print("Response Headers:")
+            for header, value in response.getheaders():
+                print(f"{header}: {value}")
+            api_result = json.loads(response.read().decode("utf-8"))
+        finally:
+            self.conn.close()
+
+        self.parse_result(api_result)
+        return api_result
+
+    def parse_result(self, data):
+        result = []
+        if 'items' not in data:
+            return result
+
+        for item in data['items']:
+            if item['id']['kind'] != 'youtube#video':
+                continue
+                
+            snippet = item['snippet']
+            video_id = item['id']['videoId']
+            
+            # 동영상 세부 정보 가져오기
+            video_details = self.get_video_details(video_id)
+            
+            # 조회수를 가져오되, 없으면 0으로 설정
+            try:
+                view_count = int(video_details.get('statistics', {}).get('viewCount', 0))
+            except (ValueError, TypeError):
+                view_count = 0
+            
+            result.append(
+                dict(
+                    title=snippet.get('title', ''),
+                    track_popularity=view_count,
+                    album_name=snippet.get('channelTitle', ''),
+                    release_date=snippet.get('publishedAt', '').split('T')[0],
+                    artists=snippet.get('channelTitle', ''),
+                    spotify_url=f"https://www.youtube.com/watch?v={video_id}",
+                    album_cover=snippet.get('thumbnails', {}).get('high', {}).get('url', '')
+                )
+            )
+        
+        return result
+
+    def get_video_details(self, video_id):
+        path = (f"/youtube/v3/videos?"
+               f"part=statistics"
+               f"&id={video_id}"
+               f"&key={self.api_key}")
+        
+        try:
+            self.conn = http.client.HTTPSConnection(self.base_url)
+            self.conn.request("GET", path)
+            response = self.conn.getresponse()
+            data = json.loads(response.read().decode("utf-8"))
+            
+            if 'items' in data and len(data['items']) > 0:
+                return data['items'][0]
+            return {}
+        except Exception as e:
+            print(f"Error getting video details: {e}")
+            return {}
+        finally:
+            self.conn.close()
+
+if __name__ == '__main__':
+    import requests
+
+    youtube_api_handler = YoutubeAPIHandler()
+    print(youtube_api_handler.search("power", 'title'))
+

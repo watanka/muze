@@ -1,89 +1,199 @@
-/* css/styles.css */
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
+/* 프로필 컨테이너 */
+.profile-container {
+    max-width: 900px;
+    margin: 80px auto 20px;
+    padding: 0 20px;
 }
 
-/* 컨테이너 스타일 */
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* 프로필 헤더 */
+.profile-header {
+    background-color: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 제목 스타일 */
-h1 {
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.profile-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--accent-primary);
+}
+
+.profile-text {
+    flex-grow: 1;
+}
+
+.profile-nickname {
+    margin: 0 0 12px 0;
     font-size: 2em;
-    color: #333;
-    margin-bottom: 10px;
+    color: var(--text-primary);
 }
 
-/* 이미지 스타일 */
-img {
-    display: block;
-    margin: 0 auto 20px;
-    border-radius: 5px;
-}
-
-/* 문단 스타일 */
-p {
-    font-size: 1.1em;
-    color: #555;
-    line-height: 1.5;
-}
-
-/* 댓글 섹션 스타일 */
-h2 {
-    font-size: 1.5em;
-    color: #333;
-    margin-top: 30px;
-}
-
-/* 댓글 목록 스타일 */
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    background: #e9ecef;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px 0;
-    position: relative;
-}
-
-/* 댓글 작성 섹션 스타일 */
-h3 {
-    font-size: 1.3em;
-    color: #333;
-    margin-top: 30px;
-}
-
-textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    resize: vertical;
-}
-
-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
+/* 친구 요청 버튼 */
+.friend-request-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 0.95em;
     cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--accent-primary);
+    color: white;
 }
 
-button:hover {
-    background-color: #0056b3;
+.friend-request-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(124, 58, 237, 0.2);
+}
+
+.friend-request-btn.is-friend {
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
+}
+
+/* 프로필 섹션 */
+.profile-section {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 1.3em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.section-header i {
+    color: var(--accent-primary);
+}
+
+/* 노래 그리드 */
+.song-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+/* 노래 카드 */
+.song-card {
+    background-color: var(--bg-primary);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.song-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.song-link {
+    display: block;
+    padding: 16px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.song-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.song-info h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--text-primary);
+}
+
+.song-info p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+/* 빈 상태 메시지 */
+.empty-message {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 24px;
+    font-style: italic;
+    margin: 0;
+}
+
+/* 액션 링크 */
+.action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--accent-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 16px;
+    transition: all 0.2s ease;
+}
+
+.action-link:hover {
+    background-color: var(--accent-secondary);
+    transform: translateY(-2px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .profile-container {
+        margin-top: 60px;
+        padding: 0 15px;
+    }
+
+    .profile-header {
+        padding: 20px;
+    }
+
+    .profile-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-picture {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-nickname {
+        font-size: 1.8em;
+    }
+
+    .profile-section {
+        padding: 16px;
+    }
+
+    .song-grid {
+        grid-template-columns: 1fr;
+    }
 }

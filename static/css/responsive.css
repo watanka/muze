@@ -1,0 +1,46 @@
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.75rem 1rem;
+    }
+
+    .nav-menu {
+        gap: 1rem;
+    }
+
+    .login-button {
+        padding: 0.4rem 1.2rem;
+    }
+
+    .message-link i {
+        font-size: 18px;
+    }
+    
+    .nav-badge {
+        min-width: 16px;
+        height: 16px;
+        font-size: 11px;
+    }
+
+    .profile-container {
+        padding: 15px;
+        margin-top: 60px;
+    }
+
+    .profile-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profile-nickname {
+        font-size: 2em;
+    }
+
+    .song-grid {
+        grid-template-columns: 1fr;
+    }
+}

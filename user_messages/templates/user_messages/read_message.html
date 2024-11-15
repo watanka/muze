@@ -1,3 +1,54 @@
-<h2>Message from {{ message.sender }}</h2>
-<p>{{ message.content }}</p>
-<p>Sent at: {{ message.timestamp }}</p>
+{% load static %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<link rel="stylesheet" href="{% static 'user_messages/style.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="read-message-container">
+    <div class="section-header">
+        <a href="{% url 'user_messages:inbox' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </div>
+
+    <div class="message-detail-card">
+        <div class="message-sender">
+            <img src="{{ message.sender.profile_picture_url|default:'/static/images/default-user-profile.png' }}" 
+                 alt="{{ message.sender }}" 
+                 class="sender-avatar">
+            <div class="sender-info">
+                <h3>{{ message.sender }}</h3>
+                <span class="message-time">
+                    <i class="far fa-clock"></i>
+                    {{ message.timestamp|date:"Y년 n월 j일 H:i" }}
+                </span>
+            </div>
+        </div>
+
+        <div class="message-body">
+            {{ message.content|linebreaks }}
+        </div>
+
+        {% if message.song %}
+            <div class="message-song-card">
+                <div class="song-thumbnail">
+                    <img src="{{ message.song.album_cover }}" alt="{{ message.song.title }} 앨범 커버">
+                </div>
+                <div class="song-info">
+                    <h3><a href="{% url 'musics:detail' message.song.id %}">{{ message.song.title }}</a></h3>
+                    <p class="artist">{{ message.song.artist }}</p>
+                    <div class="song-stats">
+                        <span class="stat">
+                            <i class="fas fa-heart"></i> {{ message.song.num_likes }}
+                        </span>
+                        <span class="stat">
+                            <i class="fas fa-comment"></i> {{ message.song.num_mention }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

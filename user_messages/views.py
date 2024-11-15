@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Message
 from .forms import MessageForm
+from music_dashboard.tasks import celery_save_user_activity
 
 import logging
 logger = logging.getLogger('user_message')
@@ -17,16 +18,19 @@ def send_message(request, song_id):
         form = MessageForm(request.POST)
         if form.is_valid():
             selected_song = get_object_or_404(Song, id=song_id)
-            selected_song.num_mention += 1
-            selected_song.save(update_fields=['num_mention'])
+            selected_song.add_num_mention()
 
-            message = form.save(commit=False)
-            message.sender = request.user
-            message.song_id = song_id
-            message.save()
+            receiver = form.clean_data['receiver']
+            content = form.clean_data['content']
+
+            message = Message.objects.save_message(request.user, receiver, selected_song, content)
             
-            logger.info(f"Message sent by {request.user.username} to {request.POST.get('receiver')}: song {selected_song.title}")
+            logger.info(f"Message sent by {request.user.username} to {receiver}: song {selected_song.title}")
             
+            celery_save_user_activity.delay(user = request.user,
+                                            activity_type = 'message',
+                                            song = selected_song,
+                                            friend_user = receiver)
             return redirect(reverse('musics:detail', args=(song_id, )))
     else:
         form = MessageForm()
@@ -34,20 +38,18 @@ def send_message(request, song_id):
 
 @login_required
 def unread(request):
-    unread = Message.objects.filter(receiver=request.user).filter(is_read=False)
+    unread = Message.objects.get_unread_messages(user=request.user)
     return JsonResponse({'unread_messages_count': len(unread)})
 
 @login_required
 def inbox(request):
-    messages = Message.objects.filter(receiver=request.user).order_by('-timestamp')
-
+    messages = Message.objects.list_inbox(receiver=request.user)
     return render(request, 'user_messages/inbox.html', {'messages': messages})
 
 @login_required
 def read_message(request, message_id): 
     message = Message.objects.get(id = message_id, receiver = request.user)
-    message.is_read = True
-    message.save()
+    message.read_message()
 
     logger.info(f"User {request.user.username} read message {message_id}")
     return render(request, 'user_messages/read_message.html', {'message': message})

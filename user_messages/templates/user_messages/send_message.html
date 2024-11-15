@@ -1,5 +1,45 @@
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Send Message</button>
-</form>
+{% load static %}
+<link rel="stylesheet" href="{% static 'user_messages/style.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="send-message-container">
+    <div class="section-header">
+        <a href="{% url 'user_messages:inbox' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        
+    <div class="message-form-card">
+        <form method="post" class="message-form">
+            {% csrf_token %}                    
+            
+            <div class="form-group">
+                <label for="{{ form.receiver.id_for_label }}">
+                    <i class="fas fa-user"></i> 받는 사람
+                </label>
+                {{ form.receiver }}
+                {% if form.receiver.errors %}
+                    <div class="form-error">{{ form.receiver.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}">
+                    <i class="fas fa-envelope"></i> 메시지 내용
+                </label>
+                {{ form.content }}
+                {% if form.content.errors %}
+                    <div class="form-error">{{ form.content.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-paper-plane"></i> 메시지 보내기
+                </button>
+                <a href="{% url 'user_messages:inbox' %}" class="cancel-button">
+                    <i class="fas fa-times"></i> 취소
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

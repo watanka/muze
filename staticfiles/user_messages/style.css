@@ -1,0 +1,363 @@
+:root {
+    --bg-primary: #F0F7FF;     /* 매우 연한 블루 */
+    --bg-secondary: #FFFFFF;   /* 흰색 */
+    --bg-elevated: #E8F3FF;    /* 연한 블루 포인트 */
+    --accent-primary: #7C3AED; /* 보라색 포인트 */
+    --text-primary: #2D3748;   /* 진한 텍스트 */
+    --text-secondary: #718096; /* 보조 텍스트 */
+    --border-color: #E2E8F0;   /* 경계선 색상 */
+}
+
+/* inbox 스타일 */
+.content-wrapper {
+    padding-top: 80px;
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+}
+
+.inbox-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--text-primary);
+}
+
+/* 메시지 카드 */
+.message-card {
+    display: block;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.message-card:hover {
+    background-color: var(--bg-elevated);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.message-card.unread {
+    background-color: var(--bg-elevated);
+    border-left: 4px solid var(--accent-primary);
+}
+
+/* 발신자 정보 */
+.message-sender {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.sender-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sender-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sender-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.message-time {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+/* 메시지 미리보기 */
+.message-preview {
+    padding-left: 52px;
+}
+
+.message-content {
+    margin: 0 0 12px 0;
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+/* 노래 미리보기 */
+.message-song-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+}
+
+.song-thumbnail {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.song-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.song-title {
+    font-weight: 500;
+    font-size: 0.9em;
+    color: var(--text-primary);
+}
+
+.song-artist {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+/* 빈 메시지함 */
+.empty-inbox {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.empty-inbox i {
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-inbox p {
+    font-size: 1.1em;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding-top: 60px;
+    }
+
+    .inbox-container {
+        padding: 0 12px;
+    }
+
+    .message-card {
+        padding: 12px;
+    }
+
+    .message-preview {
+        padding-left: 44px;
+    }
+
+    .sender-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .song-thumbnail {
+        width: 40px;
+        height: 40px;
+    }
+
+    .message-content {
+        font-size: 0.9em;
+    }
+}
+
+/* 메시지 읽기 컨테이너 */
+.read-message-container {
+    max-width: 600px;  /* 더 좁은 너비로 조정 */
+    margin: 80px auto 20px;
+    padding: 0 20px;
+}
+
+/* 메시지 상세 카드 */
+.message-detail-card {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 발신자 정보 */
+.message-sender {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sender-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sender-info h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--text-primary);
+}
+
+.message-time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* 메시지 내용 */
+.message-body {
+    padding: 20px 0;
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 1em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* 노래 카드 (컴팩트한 버전) */
+.message-song-card {
+    margin-top: 20px;
+    padding: 12px;
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.2s ease;
+}
+
+.message-song-card:hover {
+    background-color: var(--bg-elevated);
+}
+
+.message-song-card .song-thumbnail {
+    width: 60px;  /* 더 작은 크기로 조정 */
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.message-song-card .song-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.message-song-card .song-info {
+    flex-grow: 1;
+}
+
+.message-song-card h3 {
+    margin: 0 0 4px 0;
+    font-size: 1em;
+    color: var(--text-primary);
+}
+
+.message-song-card .artist {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+/* 노래 통계 */
+.song-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+.stat i {
+    color: var(--accent-primary);
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    text-decoration: none;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: var(--accent-primary);
+    color: white;
+    transform: translateX(-2px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .read-message-container {
+        margin-top: 60px;
+        padding: 0 15px;
+    }
+
+    .message-detail-card {
+        padding: 16px;
+    }
+
+    .message-sender {
+        padding-bottom: 12px;
+    }
+
+    .sender-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .message-body {
+        padding: 16px 0;
+        font-size: 0.95em;
+    }
+
+    .message-song-card {
+        padding: 10px;
+    }
+
+    .message-song-card .song-thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+}

@@ -1,0 +1,44 @@
+/* 메시지 링크 스타일 */
+.message-link {
+    position: relative;
+    padding: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.message-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.message-link:hover {
+    color: var(--accent-primary);
+}
+
+.message-link i {
+    font-size: 20px;
+}
+
+/* 메시지 뱃지 */
+.nav-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4b4b;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(255, 75, 75, 0.3);
+}
+
+.nav-link:hover .nav-badge {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}

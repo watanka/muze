@@ -6,38 +6,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ user.nickname }} - 상세 정보</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'users/styles.css' %}">
 </head>
 <body>
-    <h1>이름: {{ user.nickname }}</h1>
-    <img src="{{ user.profile_picture.url }}" alt="{{ user.nickname }} 프로필사진">
+    {% include 'navbar.html' %}
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-info">
+                <img src="{{ user.profile_picture_url|default:'/static/images/default-user-profile.png' }}" 
+                     alt="{{ user.nickname }} 프로필사진"
+                     class="profile-picture">
+                <div class="profile-text">
+                    <h1 class="profile-nickname">{{ user.nickname }}</h1>
+                    {% if request.user.is_authenticated and request.user != user %}
+                        <form action="{% url 'users:send_friend_request' user.id %}" method="post" class="friend-request-form">
+                            {% csrf_token %}
+                            <button type="submit" class="friend-request-btn {% if is_friend %}is-friend{% endif %}">
+                                {% if is_friend %}
+                                    <i class="fas fa-user-check"></i> 친구
+                                {% else %}
+                                    <i class="fas fa-user-plus"></i> 친구 추가
+                                {% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     
-    <h3>좋아하는 노래</h3>
-    {% if user.liked_songs %}
-        <ul>
-            {% for song in user.liked_songs.all %}    
-                <li><a href="{% url 'musics:detail' song.id %}">{{ song.title }}</a><br></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>좋아하는 노래가 없다</p>
-    {% endif %}
+        <div class="profile-content">
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-star"></i> 오늘의 노래</h2>
+                </div>
+                <div class="section-content">
+                    {% if active_today_song %}
+                        <div class="song-card">
+                            <a href="{% url 'musics:detail' active_today_song.id %}" class="song-link">
+                                <div class="song-info">
+                                    <h3>{{ active_today_song.title }}</h3>
+                                    <p>{{ active_today_song.artist }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        {% if request.user == user %}
+                            <button onclick="location.href='{% url 'musics:index' %}'" class="today-song-button">
+                                <i class="fas fa-music"></i>
+                                오늘의 노래 등록하기
+                        </button>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
     
-    <h3>오늘의 노래</h3>
-    {% if active_today_song %}
-        <p><a href="{% url 'musics:detail' active_today_song.id %}">{{ active_today_song.title }}</a></p>
-    {% else %}
-        <p>오늘의 노래가 없습니다.</p>
-        {% if request.user == user %}
-            <a href="{% url 'musics:index' %}">오늘의 노래 등록하러가기</a>
-        {% endif %}
-    {% endif %}
-    
-    {% if request.user.is_authenticated and request.user != user %}
-        <form action="{% url 'users:send_friend_request' user.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit">친구 추가</button>
-        </form>
-    {% endif %}
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-heart"></i> 좋아하는 노래</h2>
+                </div>
+                <div class="section-content">
+                    {% if user.liked_songs.exists %}
+                        <div class="song-grid">
+                            {% for song in user.liked_songs.all %}
+                                <div class="song-card">
+                                    <a href="{% url 'musics:detail' song.id %}" class="song-link">
+                                        <div class="song-info">
+                                            <h3>{{ song.title }}</h3>
+                                            <p>{{ song.artist }}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-message">좋아하는 노래가 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

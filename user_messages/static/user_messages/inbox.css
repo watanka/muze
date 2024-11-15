@@ -1,0 +1,174 @@
+.content-wrapper {
+    padding-top: 80px;
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+}
+
+.inbox-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--text-primary);
+}
+
+/* 메시지 카드 */
+.message-card {
+    display: block;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.message-card:hover {
+    background-color: var(--bg-elevated);
+    transform: translateY(-1px);
+}
+
+.message-card.unread {
+    background-color: var(--bg-elevated);
+    border-left: 4px solid var(--accent-primary);
+}
+
+/* 발신자 정보 */
+.message-sender {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.sender-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sender-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sender-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.message-time {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+/* 메시지 미리보기 */
+.message-preview {
+    padding-left: 52px;  /* avatar width + gap */
+}
+
+.message-content {
+    margin: 0 0 12px 0;
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+/* 노래 미리보기 */
+.message-song-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+}
+
+.song-thumbnail {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.song-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.song-title {
+    font-weight: 500;
+    font-size: 0.9em;
+    color: var(--text-primary);
+}
+
+.song-artist {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+/* 빈 메시지함 */
+.empty-inbox {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.empty-inbox i {
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-inbox p {
+    font-size: 1.1em;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding-top: 60px;
+    }
+
+    .inbox-container {
+        padding: 0 12px;
+    }
+
+    .message-card {
+        padding: 12px;
+    }
+
+    .message-preview {
+        padding-left: 44px;
+    }
+
+    .sender-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .song-thumbnail {
+        width: 40px;
+        height: 40px;
+    }
+
+    .message-content {
+        font-size: 0.9em;
+    }
+}

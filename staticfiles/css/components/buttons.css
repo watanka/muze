@@ -1,0 +1,31 @@
+/* 로그인 버튼 */
+.login-button {
+    background-color: var(--accent-primary);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.login-button:hover {
+    background-color: var(--accent-secondary);
+    transform: translateY(-1px);
+}
+
+/* 액션 링크 */
+.action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--accent-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.action-link:hover {
+    background-color: var(--accent-secondary);
+    transform: translateY(-2px);
+}

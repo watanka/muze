@@ -1,0 +1,18 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<div class="search-container">  
+    <form method = 'get' action="{% url 'musics:search' %}" class="search-form">
+        {% csrf_token %}
+        <div class="search-box">    
+            <div class="search-category">
+                {{ form.category }}
+            </div>
+            <div class="search-keyword">
+                {{ form.keyword }}
+            </div>
+            <button type="submit" class="search-button">
+                <i class="fas fa-search"></i>
+                </button>
+        </div>
+    </form>
+</div>

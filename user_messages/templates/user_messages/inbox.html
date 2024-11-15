@@ -1,12 +1,48 @@
-<h2>Your Inbox</h2>
-<ul>
-    {% for message in messages %}
-        <li>
-            <a href="{% url 'user_messages:read_message' message.id %}">
-                From: {{ message.sender }} - {{ message.content }} - {{ message.song }} - ({{ message.timestamp }})
-            </a>
-        </li>
-    {% empty %}
-        <li>No messages.</li>
-    {% endfor %}
-</ul>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'user_messages/style.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="content-wrapper">
+    <div class="inbox-container">
+        <div class="section-header">
+            <h2><i class="fas fa-inbox"></i> 메시지함</h2>
+        </div>
+
+        <div class="message-list">
+            {% for message in messages %}
+                <a href="{% url 'user_messages:read_message' message.id %}" class="message-card {% if not message.is_read %}unread{% endif %}">
+                    <div class="message-sender">
+                        <img src="{{ message.sender.profile_picture_url|default:'/static/images/default-user-profile.png' }}" 
+                             alt="{{ message.sender }}" 
+                             class="sender-avatar">
+                        <div class="sender-info">
+                            <span class="sender-name">{{ message.sender }}</span>
+                            <span class="message-time">{{ message.timestamp|timesince }} 전</span>
+                        </div>
+                    </div>
+
+                    <div class="message-preview">
+                        <p class="message-content">{{ message.content|truncatechars:100 }}</p>
+                        {% if message.song %}
+                            <div class="message-song-preview">
+                                <img src="{{ message.song.album_cover }}" 
+                                     alt="{{ message.song.title }}" 
+                                     class="song-thumbnail">
+                                <div class="song-info">
+                                    <span class="song-title">{{ message.song.title }}</span>
+                                    <span class="song-artist">{{ message.song.artist }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+            {% empty %}
+                <div class="empty-inbox">
+                    <i class="fas fa-inbox fa-3x"></i>
+                    <p>받은 메시지가 없습니다</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

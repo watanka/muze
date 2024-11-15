@@ -1,11 +1,10 @@
 :root {
-    /* 네온 무드 테마 */
-    --bg-primary: #0F172A;     /* 매우 진한 네이비 */
-    --bg-secondary: #1E293B;   /* 진한 네이비 */
-    --accent-primary: #FF0080; /* 네온 핑크 */
-    --accent-secondary: #7928CA; /* 네온 퍼플 */
-    --text-primary: #F8FAFC;   /* 밝은 텍스트 */
-    --text-secondary: #94A3B8; /* 보조 텍스트 */
+    --bg-primary: #F0F7FF;     /* 매우 연한 블루 */
+    --bg-secondary: #FFFFFF;   /* 흰색 */
+    --bg-accent: #E8F3FF;     /* 연한 블루 포인트 */
+    --accent: #7C3AED;        /* 보라색 포인트 */
+    --text-primary: #2D3748;  /* 진한 텍스트 */
+    --text-secondary: #718096; /* 보조 텍스트 */
 }
 
 /* 공통으로 적용될 기본 스타일 */

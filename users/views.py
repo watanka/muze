@@ -39,13 +39,13 @@ class ProfileView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
-        print('user', user)
         today_song = TodaySong.objects.filter(
                     user_id=user.id,
                     expired_at__gt=timezone.now()
                 ).order_by('-created_at').first()
 
-        context['active_today_song'] = today_song.song
+        if today_song:
+            context['active_today_song'] = today_song.song
         return context
 
 @login_required
